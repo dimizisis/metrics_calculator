@@ -16,7 +16,7 @@ This is a maven project. To compile the project execute the following command:
 Open a cmd window in the directory where MetricsCalculator.jar is located and run the following command:
 
 ```
-java -jar MetricsCalculator.jar <project_root_absolute_path>
+java -jar MetricsCalculator.jar <project_root_absolute_path> <outputfile_absolute_path>
 ```
 
 where project_root_absolute_path is the full path to the root folder of the project you want to parse (ie before the src folders)
