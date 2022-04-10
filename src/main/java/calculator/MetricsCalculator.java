@@ -19,6 +19,7 @@ import visitors.ClassVisitor;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class MetricsCalculator {
@@ -34,7 +35,7 @@ public class MetricsCalculator {
      *
      * @return 0 if everything went ok, -1 otherwise
      */
-    public int start () {
+    public int start() {
         ProjectRoot projectRoot = getProjectRoot(project.getClonePath());
         List<SourceRoot> sourceRoots = projectRoot.getSourceRoots();
         try {
@@ -85,8 +86,8 @@ public class MetricsCalculator {
 
     /**
      * Creates the file set (add appropriate classes)
-     * @param sourceRoots the source roots of project
      *
+     * @param sourceRoots the source roots of project
      * @return size of the file set (int)
      */
     private int createFileSet(List<SourceRoot> sourceRoots) {
@@ -107,7 +108,8 @@ public class MetricsCalculator {
                                                             .map(classOrInterfaceDeclaration -> classOrInterfaceDeclaration.getFullyQualifiedName().get())
                                                             .map(Class::new)
                                                             .collect(Collectors.toSet())));
-                                        } catch (Throwable ignored) {}
+                                        } catch (Throwable ignored) {
+                                        }
                                     });
                         } catch (Exception ignored) {
                         }
@@ -121,28 +123,30 @@ public class MetricsCalculator {
      * Starts the calculations
      *
      * @param sourceRoots the list of source roots of project
-     *
      */
     private void startCalculations(List<SourceRoot> sourceRoots) {
-            sourceRoots
-                    .forEach(sourceRoot -> {
-                        try {
-                            sourceRoot.tryToParse()
-                                    .stream()
-                                    .filter(res -> res.getResult().isPresent())
-                                    .forEach(res -> {
-                                        analyzeCompilationUnit(res.getResult().get());
-                                    });
-                        } catch (Exception ignored) {}
-                    });
-
+        AtomicInteger progress = new AtomicInteger(1);
+        sourceRoots
+                .forEach(sourceRoot -> {
+                    System.out.print("\rAnalysing Source Root: " + sourceRoot.getRoot().toString() + " (" + progress + "/" + sourceRoots.size() + ")...");
+                    try {
+                        sourceRoot.tryToParse()
+                                .stream()
+                                .filter(res -> res.getResult().isPresent())
+                                .forEach(res -> {
+                                    analyzeCompilationUnit(res.getResult().get());
+                                });
+                    } catch (Exception ignored) {
+                    }
+                    progress.getAndIncrement();
+                });
+        System.out.println();
     }
 
     /**
      * Analyzes the compilation unit given.
      *
      * @param cu the compilation unit given
-     *
      */
     private void analyzeCompilationUnit(CompilationUnit cu) {
         analyzeClassOrInterfaces(cu);
@@ -153,13 +157,13 @@ public class MetricsCalculator {
      * Analyzes the classes (or interfaces) given a compilation unit.
      *
      * @param cu the compilation unit given
-     *
      */
     private void analyzeClassOrInterfaces(CompilationUnit cu) {
         cu.findAll(ClassOrInterfaceDeclaration.class).forEach(cl -> {
             try {
                 cl.accept(new ClassVisitor(project.getJavaFiles(), cu.getStorage().get().getPath().toString().replace("\\", "/").replace(project.getClonePath(), "").substring(1), cl), null);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         });
     }
 
@@ -167,21 +171,17 @@ public class MetricsCalculator {
      * Analyzes the enumerations given a compilation unit.
      *
      * @param cu the compilation unit given
-     *
      */
     private void analyzeEnums(CompilationUnit cu) {
         cu.findAll(EnumDeclaration.class).forEach(cl -> {
             try {
                 cl.accept(new ClassVisitor(project.getJavaFiles(), cu.getStorage().get().getPath().toString().replace("\\", "/").replace(project.getClonePath(), "").substring(1), cl), null);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         });
     }
 
-    public String printResults() {
-        StringBuilder output = new StringBuilder();
-        output.append("FilePath\tClassesNum\tWMC\tDIT\tComplexity\tLCOM\tMPC\tNOM\tRFC\tDAC\tNOCC\tCBO\tSize1\tSize2\tClassNames");
-        project.getJavaFiles().forEach(javaFile -> output.append(javaFile.getPath()).append("\t").append(javaFile.getQualityMetrics()).append("\t").append(javaFile.getClassNames()).append("\n"));
-        return output.toString();
+    public Project getProject() {
+        return project;
     }
-
 }
