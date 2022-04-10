@@ -33,6 +33,16 @@ public class JavaFile {
         for (Class aClass : getClasses()) {
             getQualityMetrics().add(aClass.getQualityMetrics());
         }
+        setQMOODMetrics();
+    }
+
+    private void setQMOODMetrics() {
+        getQualityMetrics().setReusability(-0.25 * getQualityMetrics().getDCC() + 0.25 * getQualityMetrics().getCAMC() + 0.5 * getQualityMetrics().getNPM() + 0.5 * getQualityMetrics().getDSC());
+        getQualityMetrics().setFlexibility(-0.25 * getQualityMetrics().getDCC() + 0.25 * getQualityMetrics().getDAM() + 0.5 * getQualityMetrics().getMOA() + 0.5 * getQualityMetrics().getNOP());
+        getQualityMetrics().setUnderstandability(-0.33 * getQualityMetrics().getANA() + 0.33 * getQualityMetrics().getDAM() + 0.33 * getQualityMetrics().getCAMC() - 0.33 * getQualityMetrics().getDCC() - 0.33 * getQualityMetrics().getNOP() - 0.33 * getQualityMetrics().getNOM() - 0.33 * getQualityMetrics().getDSC());
+        getQualityMetrics().setFunctionality(0.12 * getQualityMetrics().getCAMC() + 0.22 * getQualityMetrics().getNOP() + 0.22 * getQualityMetrics().getNPM() + 0.22 * getQualityMetrics().getDSC() + 0.22 * getQualityMetrics().getNOH());
+        getQualityMetrics().setExtendibility(0.5 * getQualityMetrics().getANA() - 0.5 * getQualityMetrics().getDCC() + 0.5 * getQualityMetrics().getMFA() + 0.5 * getQualityMetrics().getNOP());
+        getQualityMetrics().setEffectiveness(0.2 * getQualityMetrics().getANA() + 0.2 * getQualityMetrics().getDAM() + 0.2 * getQualityMetrics().getMOA() + 0.2 * getQualityMetrics().getMFA() + 0.2 * getQualityMetrics().getNOP());
     }
 
     public String getClassNames() {
