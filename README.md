@@ -16,15 +16,34 @@ This is a maven project. To compile the project execute the following command:
 Open a cmd window in the directory where MetricsCalculator.jar is located and run the following command:
 
 ```
-java -jar MetricsCalculator.jar <project_root_absolute_path> <outputfile_absolute_path>
+java -jar MetricsCalculator.jar <project_root_absolute_path> <outfilename>.csv
 ```
 
-where project_root_absolute_path is the full path to the root folder of the project you want to parse (ie before the src folders)
+where project_root_absolute_path and outfilename are the full path to the root folder of the project you want to parse (ie before the src folders) and the name of the CSV file in which the metric results will be stored, respectively (see also the screenshot below).
 
-Once the process is complete, the results should appear.
+![alt_text](https://i.imgur.com/UhAhXv1.png)
+
+If you want the results file to be saved in a specific folder, then you also enter the complete path to that folder and then <outfilename> .csv (eg C:/Users/results.csv)
+
+Once the process is complete, the results file should be created.
+
+### 2. Instructions for use via GUI
+
+Double-clicking on MetricsCalculator.jar should bring up the following window:
+
+![alt_text](https://i.imgur.com/c9lHNmN.png)
+
+where in the upper textbox should be placed (either with copy-paste, or with the Select button) the full path to the root folder of the project you want to analyze (before the src folders that is), while in the lower textbox the full path of the CSV file in which the metric results will be stored (the CSV name is auto-generated of the type: analysis_xxx.csv).
+
+Once the process is complete, the program will output a completion message (see screenshot below) and the results file should be created in the selected folder.
+
+![alt_text](https://i.imgur.com/iDKLpCz.png)
+
+#### Note 1: The UI function has not been completely tested yet, errors may occur.
+#### Note 2: No analysis progress report will be reported to the user, so in the case of analyzing a large project, the program will simply remain apathetic for a long time.
 
 ## Calculated metrics
-The generated String contains 12 metrics from three different metrics suites (CSV format separated by tabs \t). The order of the extracted metrics along with the metrics suite that they belong to is presented in the following table. The quality metrics are calculated per Java Source file.
+The generated comma separated values (.csv) file contains 27 (+1 extra) metrics from four different metrics suites. The order of the extracted metrics along with the metrics suite that they belong to is presented in the following table.  
 
 | Field | Metric Suite        | Metric | Description                                                  |
 |-------|---------------------|--------|--------------------------------------------------------------|
@@ -34,10 +53,26 @@ The generated String contains 12 metrics from three different metrics suites (CS
 | 4     | Chidamber & Kemerer | CBO    | Coupling between object classes (Coupling between every user-defined class, except its inner & nested classes). Coupling: Method invocation, inheritance, exception handling, method parameters, class field access,                               |
 | 5     | Chidamber & Kemerer | RFC    | Response for class (WMC + Size of Response Set). The Response set for a class is defined by C&K as 'a set of methods that can potentially be executed in response to a message received by an object of that class               |
 | 6     | Chidamber & Kemerer | LCOM   | Lack of cohesion in methods (LCOM1)                          |
-| 7     | Li & Henry          | Complexity   | Weighted methods complexity (Avg Cyclomatic Complexity of Class (#SelectionStructures / #Methods))          |
-| 8    | Li & Henry          | MPC    | Message-passing couple (Total Number of Methods Called)      |
-| 9    | Li & Henry          | DAC    | Data abstraction coupling (Number of user-defined classes as class properties)                                   |
-| 10    | Li & Henry          | SIZE1  | Lines of code (LOC)                                          |
-| 11    | Li & Henry          | SIZE2  | Number of properties                                         |
-| 12    | Bansyia             | Classes Number (DSC)    | Design size in classes (Number of classes in the design)     |
-| 12    | -             | ClassNames    | The names of classes contained in the Java source file     |  
+| 7     | Li & Henry          | WMC*   | Weighted methods complexity (Avg Cyclomatic Complexity of Class (#SelectionStructures / #Methods))          |
+| 8    | Li & Henry          | NOM    | Number of methods                                            |
+| 9    | Li & Henry          | MPC    | Message-passing couple (Total Number of Methods Called)      |
+| 10    | Li & Henry          | DAC    | Data abstraction coupling (Number of user-defined classes as class properties)                                   |
+| 11    | Li & Henry          | SIZE1  | Lines of code (LOC)                                          |
+| 12    | Li & Henry          | SIZE2  | Number of properties                                         |
+| 13    | Bansyia             | DSC    | Design size in classes (Number of classes in the design)     |
+| 14    | Bansyia             | NOH    | Number of hierarchies (if NOCC > 0 && ANA == 0, NOH = 1)     |
+| 15    | Bansyia             | ANA    | Average number of ancestors                                  |
+| 16    | Bansyia             | DAM    | Data access metric ((#Total_Attributes - #Public_Attributes) / #Total_Attributes)                                           |
+| 17    | Bansyia             | DCC    | Direct class coupling (Same as CBO)                          |
+| 18    | Bansyia             | CAMC   | Cohesion among methods in class (The summation of number of different types of method parameters in every method divided by a multiplication of number of different method parameter types in whole class and number of methods)                              |
+| 19    | Bansyia             | MOA    | Measure of aggregation (Count of the number of class fields whose types are user-defined classes)  |
+| 20    | Bansyia             | MFA    | Measure of functional abstraction (The ratio of the number of methods inherited by a class to the total number of methods accessible by members in the class)                            |
+| 21    | Bansyia             | NOP    | Number of polymorphic methods (Number of abstract methods)   |
+| 22    | Bansyia             | CIS    | Class interface size (Number of Public Methods)              |
+| 23    | QMOOD               | -      | Reusability (-0.25\*CBO + 0.25\*CAMC + 0.5\*NPM + 0.5\*DSC)        |
+| 24    | QMOOD               | -      | Flexibility (+0.25\*DAN - 0.25\*CBO + 0.5\*MOA + 0.5\*NOP)                                                 |
+| 25    | QMOOD               | -      | Understandability (-0.33\*ANA + 0.33\*DAM + 0.33\*CAMC - 0.33\*DCC - 0.33\*NOP - 0.33\*NOM - 0.33\*DSC)                           |
+| 26    | QMOOD               | -      | Functionality (0.12\*CAMC + 0.22\*NOP + 0.22\*NPM + 0.22\*DSC + 0.22\*NOH)  |
+| 27    | QMOOD               | -      | Extendability  (0.5\*ANA - 0.5\*DCC + 0.5\*MFA + 0.5\*NOP)      |
+| 28    | QMOOD               | -      | Effectiveness (0.2\*ANA + 0.2\*DAM + 0.2\*MOA + 0.2\*MFA + 0.2\*NOP)                                               |
+| 29    | Other               | FanIn  | Afferent coupling (referred as Ca  in the C&K metrics suite) |
