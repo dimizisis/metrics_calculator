@@ -1,4 +1,4 @@
-# JavaCodeMetricsCalculator
+# metrics_calculator
 
 This is a project that calculates code metrics on Java Source Code (```.java``` files).
 
