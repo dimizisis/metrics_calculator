@@ -69,10 +69,11 @@ The generated comma separated values (.csv) file contains 27 (+1 extra) metrics 
 | 20    | Bansyia             | MFA    | Measure of functional abstraction (The ratio of the number of methods inherited by a class to the total number of methods accessible by members in the class)                            |
 | 21    | Bansyia             | NOP    | Number of polymorphic methods (Number of abstract methods)   |
 | 22    | Bansyia             | CIS    | Class interface size (Number of Public Methods)              |
-| 23    | QMOOD               | -      | Reusability (-0.25\*CBO + 0.25\*CAMC + 0.5\*NPM + 0.5\*DSC)        |
-| 24    | QMOOD               | -      | Flexibility (+0.25\*DAN - 0.25\*CBO + 0.5\*MOA + 0.5\*NOP)                                                 |
-| 25    | QMOOD               | -      | Understandability (-0.33\*ANA + 0.33\*DAM + 0.33\*CAMC - 0.33\*DCC - 0.33\*NOP - 0.33\*NOM - 0.33\*DSC)                           |
-| 26    | QMOOD               | -      | Functionality (0.12\*CAMC + 0.22\*NOP + 0.22\*NPM + 0.22\*DSC + 0.22\*NOH)  |
-| 27    | QMOOD               | -      | Extendability  (0.5\*ANA - 0.5\*DCC + 0.5\*MFA + 0.5\*NOP)      |
-| 28    | QMOOD               | -      | Effectiveness (0.2\*ANA + 0.2\*DAM + 0.2\*MOA + 0.2\*MFA + 0.2\*NOP)                                               |
-| 29    | Other               | FanIn  | Afferent coupling (referred as Ca  in the C&K metrics suite) |
+| 23    | Bansyia             | NPM    | Number of Public Methods (Same as CIS metric)                |
+| 24    | QMOOD               | -      | Reusability (-0.25\*CBO + 0.25\*CAMC + 0.5\*NPM + 0.5\*DSC)        |
+| 25    | QMOOD               | -      | Flexibility (+0.25\*DAN - 0.25\*CBO + 0.5\*MOA + 0.5\*NOP)                                                 |
+| 26    | QMOOD               | -      | Understandability (-0.33\*ANA + 0.33\*DAM + 0.33\*CAMC - 0.33\*DCC - 0.33\*NOP - 0.33\*NOM - 0.33\*DSC)                           |
+| 27    | QMOOD               | -      | Functionality (0.12\*CAMC + 0.22\*NOP + 0.22\*NPM + 0.22\*DSC + 0.22\*NOH)  |
+| 28    | QMOOD               | -      | Extendability  (0.5\*ANA - 0.5\*DCC + 0.5\*MFA + 0.5\*NOP)      |
+| 29    | QMOOD               | -      | Effectiveness (0.2\*ANA + 0.2\*DAM + 0.2\*MOA + 0.2\*MFA + 0.2\*NOP)                                               |
+| 30    | Other               | FanIn  | Afferent coupling (referred as Ca  in the C&K metrics suite) |
