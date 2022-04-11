@@ -47,11 +47,14 @@ public class JavaFile {
 
     public String getClassNames() {
         StringBuilder classesAsStringBuilder = new StringBuilder();
+        String classesDelimiter = "/";
         for (Class aClass : this.getClasses()) {
-            classesAsStringBuilder.append(aClass.getQualifiedName()).append(",");
+            classesAsStringBuilder.append(aClass.getQualifiedName()).append(classesDelimiter);
         }
+        if (classesAsStringBuilder.lastIndexOf(classesDelimiter) != -1)
+            classesAsStringBuilder.replace(classesAsStringBuilder.lastIndexOf(classesDelimiter), classesAsStringBuilder.lastIndexOf(classesDelimiter)+1, "");
         String classesAsString = classesAsStringBuilder.toString();
-        return classesAsString.isEmpty() ? "" : classesAsString.substring(0, classesAsString.length() -1);
+        return classesAsString.isEmpty() ? "" : classesAsString.substring(0, classesAsString.length() - 1);
     }
 
     public String getPath() {

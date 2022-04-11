@@ -1,5 +1,6 @@
 package calculator;
 
+import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -125,20 +126,25 @@ public class MetricsCalculator {
      * @param sourceRoots the list of source roots of project
      */
     private void startCalculations(List<SourceRoot> sourceRoots) {
-        AtomicInteger progress = new AtomicInteger(1);
+        AtomicInteger srcRootProgress = new AtomicInteger(1);
         sourceRoots
                 .forEach(sourceRoot -> {
-                    System.out.print("\rAnalysing Source Root: " + sourceRoot.getRoot().toString() + " (" + progress + "/" + sourceRoots.size() + ")...");
+                    System.out.print("Analysing Source Root: " + sourceRoot.getRoot().toString() + " (" + srcRootProgress + "/" + sourceRoots.size() + ")...");
                     try {
-                        sourceRoot.tryToParse()
+                        AtomicInteger fileAnalysisProgress = new AtomicInteger(1);
+                        List<ParseResult<CompilationUnit>> parseResults = sourceRoot.tryToParse();
+                        parseResults
                                 .stream()
                                 .filter(res -> res.getResult().isPresent())
                                 .forEach(res -> {
+                                    System.out.print("\rAnalysing Source Root: " + sourceRoot.getRoot().toString() + " (" + fileAnalysisProgress.get()*100/parseResults.size() + "%)" + " (" + srcRootProgress + "/" + sourceRoots.size() + ")...");
                                     analyzeCompilationUnit(res.getResult().get());
+                                    fileAnalysisProgress.getAndIncrement();
                                 });
                     } catch (Exception ignored) {
                     }
-                    progress.getAndIncrement();
+                    srcRootProgress.getAndIncrement();
+                    System.out.println();
                 });
         System.out.println();
     }

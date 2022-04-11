@@ -312,8 +312,13 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     private int calculateMOA() {
         return (int) new HashSet<>(javaClass.getFields())
                 .stream()
-                .filter(field -> withinAnalysisBounds(field.getElementType().resolve().describe()))
-                .count();
+                .filter(field -> {
+                    try {
+                        return withinAnalysisBounds(field.getElementType().resolve().describe());
+                    } catch (Throwable ignored) {
+                        return false;
+                    }
+                }).count();
     }
 
     /**

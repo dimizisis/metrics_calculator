@@ -21,7 +21,7 @@ public class Main {
             if (outputFilename.equals("str"))
                 ResultPrinter.printString(mc);
             else
-                ResultPrinter.printCSV(mc, outputFilename);
+                ResultPrinter.printCSV(mc, outputFilename, ";");
         } else {
             EventQueue.invokeLater(() -> {
                 try {
