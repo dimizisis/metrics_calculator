@@ -40,7 +40,6 @@ Once the process is complete, the program will output a completion message (see 
 ![alt_text](https://i.imgur.com/iDKLpCz.png)
 
 #### Note 1: The UI function has not been completely tested yet, errors may occur.
-#### Note 2: No analysis progress report will be reported to the user, so in the case of analyzing a large project, the program will simply remain apathetic for a long time.
 
 ## Calculated metrics
 The generated comma separated values (.csv) file contains 27 (+1 extra) metrics from four different metrics suites. The order of the extracted metrics along with the metrics suite that they belong to is presented in the following table.  
