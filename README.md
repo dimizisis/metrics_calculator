@@ -21,7 +21,7 @@ java -jar MetricsCalculator.jar <project_root_absolute_path> <outfilename>.csv
 
 where project_root_absolute_path and outfilename are the full path to the root folder of the project you want to parse (ie before the src folders) and the name of the CSV file in which the metric results will be stored, respectively (see also the screenshot below).
 
-![alt_text](https://i.imgur.com/728ONXO.png)
+![alt_text](https://i.imgur.com/OOVfE6T.png)
 
 If you want the results file to be saved in a specific folder, then you also enter the complete path to that folder and then <outfilename> .csv (eg C:/Users/results.csv)
 
