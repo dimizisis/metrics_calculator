@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.Dialog.ModalExclusionType;
 import java.io.File;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GUI extends JFrame{
 
@@ -21,6 +22,8 @@ public class GUI extends JFrame{
     private JTextField inputDirTextField;
     private JTextField outputDirTextField;
     private JPanel loadingSpinnerPanel;
+
+    private JLabel percentageLabel;
 
     /**
      * Create the frame.
@@ -75,6 +78,8 @@ public class GUI extends JFrame{
         ImageIcon loading = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ajax-loader.gif")));
         JLabel waitingSpinner = new JLabel("", loading, JLabel.CENTER);
         panel.add(panelUp);
+        percentageLabel = new JLabel("%");
+        loadingSpinnerPanel.add(percentageLabel);
         loadingSpinnerPanel.add(waitingSpinner);
         panel.add(panelDown);
         panel.add(loadingSpinnerPanel);
@@ -108,7 +113,21 @@ public class GUI extends JFrame{
         });
     }
 
-    private class CalculationThread extends Thread{
+    private class PercentageUpdateThread extends Thread {
+
+        private final MetricsCalculator mc;
+        public PercentageUpdateThread(MetricsCalculator mc) {
+            this.mc = mc;
+        }
+        @Override
+        public void run() {
+            int progress;
+            while ((progress = mc.getOverallProgress().get()) <= 100)
+                percentageLabel.setText(progress + "%");
+        }
+    }
+
+    private class CalculationThread extends Thread {
         @Override
         public void run() {
             super.run();
@@ -130,6 +149,7 @@ public class GUI extends JFrame{
                 setSize(new Dimension(370, 185));
                 Project project = new Project(inputDirTextField.getText().replace("\\", "/"));
                 MetricsCalculator mc = new MetricsCalculator(project);
+                new PercentageUpdateThread(mc).start();
                 if (mc.start() == -1) {
                     JOptionPane.showMessageDialog(null, "No classes could be identified!", "Parsing Error", JOptionPane.ERROR_MESSAGE);
                     init();

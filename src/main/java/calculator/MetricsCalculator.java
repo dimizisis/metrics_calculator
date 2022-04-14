@@ -18,6 +18,7 @@ import infrastructure.entities.Project;
 import visitors.ClassVisitor;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,9 +27,11 @@ import java.util.stream.Collectors;
 public class MetricsCalculator {
 
     private final Project project;
+    private AtomicInteger fileAnalysisProgressPercentage;
 
     public MetricsCalculator(Project project) {
         this.project = project;
+        this.fileAnalysisProgressPercentage = new AtomicInteger(1);
     }
 
     /**
@@ -127,19 +130,21 @@ public class MetricsCalculator {
      */
     private void startCalculations(List<SourceRoot> sourceRoots) {
         AtomicInteger srcRootProgress = new AtomicInteger(1);
+        AtomicInteger overallFileAnalysisProgress = new AtomicInteger(1);
         sourceRoots
                 .forEach(sourceRoot -> {
                     System.out.print("Analysing Source Root: " + sourceRoot.getRoot().toString() + " (" + srcRootProgress + "/" + sourceRoots.size() + ")...");
+                    AtomicInteger fileAnalysisProgress = new AtomicInteger(1);
                     try {
-                        AtomicInteger fileAnalysisProgress = new AtomicInteger(1);
                         List<ParseResult<CompilationUnit>> parseResults = sourceRoot.tryToParse();
                         parseResults
                                 .stream()
                                 .filter(res -> res.getResult().isPresent())
                                 .forEach(res -> {
-                                    System.out.print("\rAnalysing Source Root: " + sourceRoot.getRoot().toString() + " (" + fileAnalysisProgress.get()*100/parseResults.size() + "%)" + " (" + srcRootProgress + "/" + sourceRoots.size() + ")...");
+                                    System.out.print("\rAnalysing Source Root: " + sourceRoot.getRoot().toString() + " (" + fileAnalysisProgress.getAndIncrement()*100/parseResults.size() + "%)" + " (" + srcRootProgress + "/" + sourceRoots.size() + ")...");
                                     analyzeCompilationUnit(res.getResult().get());
-                                    fileAnalysisProgress.getAndIncrement();
+                                    int percentage = overallFileAnalysisProgress.getAndIncrement()*100/getProject().getJavaFiles().size();
+                                    setOverallProgress(new AtomicInteger(percentage != 0 ? percentage : 1));
                                 });
                     } catch (Exception ignored) {
                     }
@@ -190,4 +195,13 @@ public class MetricsCalculator {
     public Project getProject() {
         return project;
     }
+
+    public AtomicInteger getOverallProgress() {
+        return fileAnalysisProgressPercentage;
+    }
+
+    public void setOverallProgress(AtomicInteger fileAnalysisProgressPercentage) {
+        this.fileAnalysisProgressPercentage = fileAnalysisProgressPercentage;
+    }
+
 }
