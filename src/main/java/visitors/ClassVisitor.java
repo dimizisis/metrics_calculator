@@ -27,13 +27,9 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     private final Set<String> efferentCoupledClasses = ConcurrentHashMap.newKeySet();
     private final Set<String> afferentCoupledClasses = ConcurrentHashMap.newKeySet();
     private final List<TreeSet<String>> methodIntersection = new CopyOnWriteArrayList<>();
-
-    private final Set<String> responseSet = ConcurrentHashMap.newKeySet();
     private final Set<String> methodsCalled = ConcurrentHashMap.newKeySet();
-
     private final String filePath;
     private final TypeDeclaration<?> javaClass;
-
     private final Set<JavaFile> javaFiles;
 
     public ClassVisitor(Set<JavaFile> javaFiles, String filePath, ClassOrInterfaceDeclaration javaClass) {
@@ -51,12 +47,25 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     @Override
     public void visit(EnumDeclaration javaClass, Void arg) {
         if (javaFiles.stream().anyMatch(javaFile -> javaFile.getPath().equals(filePath))) {
-            JavaFile jf = javaFiles
+            Optional<JavaFile> jfOptional = javaFiles
                     .stream()
-                    .filter(javaFile -> javaFile.getPath().equals(filePath)).findAny().get();
+                    .filter(javaFile -> javaFile.getPath().equals(filePath))
+                    .findAny();
+
+            JavaFile jf = jfOptional.orElse(null);
+
+            if (Objects.isNull(jf))
+                return;
 
             if (javaClass.getFullyQualifiedName().isPresent()) {
-                Class currentClassObject = jf.getClasses().stream().filter(cl -> cl.getQualifiedName().equals(javaClass.getFullyQualifiedName().get())).findFirst().get();
+                Optional<Class> currentClassObjectOptional = jf.getClasses().stream()
+                        .filter(cl -> cl.getQualifiedName().equals(javaClass.getFullyQualifiedName().get()))
+                        .findFirst();
+
+                Class currentClassObject = currentClassObjectOptional.orElse(null);
+
+                if (Objects.isNull(currentClassObject))
+                    return;
 
                 investigateExtendedTypes();
                 visitAllClassMethods();
@@ -72,12 +81,25 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     @Override
     public void visit(ClassOrInterfaceDeclaration javaClass, Void arg) {
         if (javaFiles.stream().anyMatch(javaFile -> javaFile.getPath().equals(filePath))) {
-            JavaFile jf = javaFiles
+            Optional<JavaFile> jfOptional = javaFiles
                     .stream()
-                    .filter(javaFile -> javaFile.getPath().equals(filePath)).findAny().get();
+                    .filter(javaFile -> javaFile.getPath().equals(filePath))
+                    .findAny();
+
+            JavaFile jf = jfOptional.orElse(null);
+
+            if (Objects.isNull(jf))
+                return;
 
             if (javaClass.getFullyQualifiedName().isPresent()) {
-                Class currentClassObject = jf.getClasses().stream().filter(cl -> cl.getQualifiedName().equals(javaClass.getFullyQualifiedName().get())).findFirst().get();
+                Optional<Class> currentClassObjectOptional = jf.getClasses().stream()
+                        .filter(cl -> cl.getQualifiedName().equals(javaClass.getFullyQualifiedName().get()))
+                        .findFirst();
+
+                Class currentClassObject = currentClassObjectOptional.orElse(null);
+
+                if (Objects.isNull(currentClassObject))
+                    return;
 
                 investigateExtendedTypes(); // Calculation of NOCC
                 visitAllClassMethods();
@@ -633,11 +655,19 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
     private Class findClassByQualifiedName(String classQualifiedName) {
         try {
-            JavaFile jf = javaFiles
+            Optional<JavaFile> jfOptional = javaFiles
                     .stream()
                     .filter(javaFile -> javaFile.getClasses().contains(new Class(classQualifiedName)))
-                    .findFirst().get();
-            return jf.getClasses().stream().filter(cl -> cl.getQualifiedName().equals(classQualifiedName)).findFirst().get();
+                    .findFirst();
+
+            JavaFile jf = jfOptional.orElse(null);
+
+            if (Objects.isNull(jf))
+                return null;
+
+            Optional<Class> classOptional = jf.getClasses().stream().filter(cl -> cl.getQualifiedName().equals(classQualifiedName)).findFirst();
+
+            return classOptional.orElse(null);
         } catch (Throwable ignored) {
             return null;
         }
@@ -713,7 +743,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      */
     private void registerMethodInvocation(String className, String signature) {
         registerCoupling(className);
-        responseSet.add(signature);
+//        responseSet.add(signature);
         methodsCalled.add(signature);
     }
 
@@ -729,7 +759,10 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         } catch (Throwable ignored) {
         }
 
-        responseSet.add(method.resolve().getQualifiedSignature());
+//        try {
+//            responseSet.add(method.resolve().getQualifiedSignature());
+//        } catch (Throwable ignored) {
+//        }
         investigateExceptions(method);
         investigateParameters(method);
         investigateInvocation(method);
