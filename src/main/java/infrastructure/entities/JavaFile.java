@@ -54,7 +54,7 @@ public class JavaFile {
         if (classesAsStringBuilder.lastIndexOf(classesDelimiter) != -1)
             classesAsStringBuilder.replace(classesAsStringBuilder.lastIndexOf(classesDelimiter), classesAsStringBuilder.lastIndexOf(classesDelimiter)+1, "");
         String classesAsString = classesAsStringBuilder.toString();
-        return classesAsString.isEmpty() ? "" : classesAsString.substring(0, classesAsString.length() - 1);
+        return classesAsString.isEmpty() ? "" : classesAsString;
     }
 
     public String getPath() {
