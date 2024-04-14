@@ -450,6 +450,8 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                     ancestorsSet.add(ancestor);
                     ancestors.addAll(getValidInterfaces(ancestor));
                     try {
+                        if (ancestor.getAllClassesAncestors().isEmpty())
+                            break;
                         ResolvedReferenceType ancestorSuperClass = ancestor.getAllClassesAncestors().get(ancestor.getAllClassesAncestors().size() - 1);
                         if (withinAnalysisBounds(ancestorSuperClass.getQualifiedName())) {
                             ancestors.add(ancestorSuperClass);
@@ -472,7 +474,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         } catch (Throwable ignored) {
         }
 
-        ancestorMethods.removeIf(method -> (method.accessSpecifier().equals(AccessSpecifier.PRIVATE)) || (method.toAst().isPresent() && method.toAst().get().isConstructorDeclaration()));
+        ancestorMethods.removeIf(method -> (method.accessSpecifier().equals(AccessSpecifier.PRIVATE)));
         javaClassMethods.removeIf(BodyDeclaration::isConstructorDeclaration);
         if (ancestorMethods.size() + javaClassMethods.size() == 0)
             return 0.0;
