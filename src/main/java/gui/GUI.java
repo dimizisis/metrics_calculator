@@ -52,11 +52,11 @@ public class GUI extends JFrame{
         loadingSpinnerPanel = new JPanel();
         panelUp.setLayout(new GridLayout(2,2,10,10));
         selectInDirBtn = new JButton("...");
-        selectInDirBtn.setHorizontalAlignment(JTextField.CENTER);
-        selectInDirBtn.setVerticalAlignment(JTextField.CENTER);
+        selectInDirBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        selectInDirBtn.setVerticalAlignment(SwingConstants.CENTER);
         selectOutDirBtn = new JButton("...");
-        selectOutDirBtn.setHorizontalAlignment(JTextField.CENTER);
-        selectOutDirBtn.setVerticalAlignment(JTextField.CENTER);
+        selectOutDirBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        selectOutDirBtn.setVerticalAlignment(SwingConstants.CENTER);
         dirChooser = new JFileChooser();
         panel.setLayout(new FlowLayout(FlowLayout.CENTER, 150, 5));
         Font ioFont = new Font("Courier", Font.PLAIN,10);
@@ -78,23 +78,23 @@ public class GUI extends JFrame{
         JLabel waitingSpinner = new JLabel("", loading, JLabel.CENTER);
         panel.add(panelUp);
         percentageLabel = new JLabel("%");
-        loadingSpinnerPanel.add(percentageLabel);
+        Objects.requireNonNull(loadingSpinnerPanel).add(percentageLabel);
         loadingSpinnerPanel.add(waitingSpinner);
         panel.add(panelDown);
         panel.add(loadingSpinnerPanel);
         this.setContentPane(panel);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(new Dimension(370, 145));
         this.setVisible(true);
         setTitle("Metrics Calculator");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
         setBackground(new Color(227));
 
-        calculateBtn.addActionListener(e -> EventQueue.invokeLater(() -> new CalculationThread().start()));
+        Objects.requireNonNull(calculateBtn).addActionListener(e -> EventQueue.invokeLater(() -> new CalculationThread().start()));
 
-        selectInDirBtn.addActionListener(arg0 -> {
+        Objects.requireNonNull(selectInDirBtn).addActionListener(arg0 -> {
             dirChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
             dirChooser.setDialogTitle("Choose Input Directory");
             dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -102,7 +102,7 @@ public class GUI extends JFrame{
                 inputDirTextField.setText(dirChooser.getSelectedFile().getAbsolutePath());
         });
 
-        selectOutDirBtn.addActionListener(arg0 -> {
+        Objects.requireNonNull(selectOutDirBtn).addActionListener(arg0 -> {
             dirChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
             dirChooser.setDialogTitle("Choose Output Directory");
             dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
