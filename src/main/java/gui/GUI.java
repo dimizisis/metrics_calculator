@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.Dialog.ModalExclusionType;
 import java.io.File;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GUI extends JFrame{
 

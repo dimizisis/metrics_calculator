@@ -20,7 +20,6 @@ import infrastructure.metrics.QualityMetrics;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
@@ -205,7 +204,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                 ++valid_classes;
             }
         }
-        if (javaClass.getConstructors().size() == 0)
+        if (javaClass.getConstructors().isEmpty())
             ++valid_classes;
 
         return valid_classes > 0 ? (total_ifs / valid_classes) : -1;
@@ -295,14 +294,14 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                 AbstractSet<String> intersection = (TreeSet<String>) (methodIntersection.get(i)).clone();
                 if ((!intersection.isEmpty()) || (!methodIntersection.isEmpty())) {
                     intersection.retainAll(methodIntersection.get(j));
-                    if (intersection.size() == 0)
+                    if (intersection.isEmpty())
                         ++lcom;
                     else
                         --lcom;
                 }
             }
         }
-        return methodIntersection.size() == 0 ? -1 : Math.max(lcom, 0);
+        return methodIntersection.isEmpty() ? -1 : Math.max(lcom, 0);
     }
 
     private double calculateWMC() {
@@ -425,7 +424,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                             return null;
                         }
                     })
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Throwable t) {
             return 0.0F;
         }

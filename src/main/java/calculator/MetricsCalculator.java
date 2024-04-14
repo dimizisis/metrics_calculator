@@ -18,7 +18,6 @@ import infrastructure.entities.Project;
 import visitors.ClassVisitor;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
