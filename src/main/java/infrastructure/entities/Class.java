@@ -1,9 +1,13 @@
 package infrastructure.entities;
 
 import infrastructure.metrics.QualityMetrics;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Setter
+@Getter
 public class Class {
 
     private String qualifiedName;
@@ -12,22 +16,6 @@ public class Class {
     public Class(String name) {
         this.qualifiedName = name;
         this.qualityMetrics = new QualityMetrics();
-    }
-
-    public String getQualifiedName() {
-        return qualifiedName;
-    }
-
-    public void setQualifiedName(String name) {
-        this.qualifiedName = name;
-    }
-
-    public QualityMetrics getQualityMetrics() {
-        return qualityMetrics;
-    }
-
-    public void setQualityMetrics(QualityMetrics qualityMetrics) {
-        this.qualityMetrics = qualityMetrics;
     }
 
     @Override

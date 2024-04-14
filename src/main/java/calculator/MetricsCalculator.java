@@ -15,6 +15,7 @@ import com.github.javaparser.utils.SourceRoot;
 import infrastructure.entities.Class;
 import infrastructure.entities.JavaFile;
 import infrastructure.entities.Project;
+import lombok.Getter;
 import visitors.ClassVisitor;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 public class MetricsCalculator {
 
+    @Getter
     private final Project project;
     private AtomicInteger fileAnalysisProgressPercentage;
 
@@ -189,10 +191,6 @@ public class MetricsCalculator {
             } catch (Exception ignored) {
             }
         });
-    }
-
-    public Project getProject() {
-        return project;
     }
 
     public AtomicInteger getOverallProgress() {

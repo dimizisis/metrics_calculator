@@ -1,11 +1,15 @@
 package infrastructure.entities;
 
 import infrastructure.metrics.QualityMetrics;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Setter
+@Getter
 public class JavaFile {
 
     private String path;
@@ -55,30 +59,6 @@ public class JavaFile {
             classesAsStringBuilder.replace(classesAsStringBuilder.lastIndexOf(classesDelimiter), classesAsStringBuilder.lastIndexOf(classesDelimiter)+1, "");
         String classesAsString = classesAsStringBuilder.toString();
         return classesAsString.isEmpty() ? "" : classesAsString;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public QualityMetrics getQualityMetrics() {
-        return qualityMetrics;
-    }
-
-    public void setQualityMetrics(QualityMetrics qualityMetrics) {
-        this.qualityMetrics = qualityMetrics;
-    }
-
-    public Set<Class> getClasses() {
-        return classes;
-    }
-
-    public void setClasses(Set<Class> classes) {
-        this.classes = classes;
     }
 
     @Override
