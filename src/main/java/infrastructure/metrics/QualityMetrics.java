@@ -69,6 +69,10 @@ public class QualityMetrics {
     }
 
     public void add(QualityMetrics o) {
+        if (this.complexity <= 0 && o.getComplexity() < 0)
+            this.complexity = -1.0;
+        else if (o.getComplexity() > 0)
+            this.complexity += o.getComplexity();
         this.complexity += o.getComplexity();
         if (this.DIT >= 0 && o.getDIT() >= 0)
             this.DIT += o.getDIT();
