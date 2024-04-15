@@ -14,7 +14,7 @@ import java.util.Objects;
 
 public class GUI extends JFrame{
 
-    private JFileChooser dirChooser;
+
     private JButton selectInDirBtn;
     private JButton selectOutDirBtn;
     private JButton calculateBtn;
@@ -32,19 +32,20 @@ public class GUI extends JFrame{
     }
 
     void init(){
+        JFileChooser dirChooser;
         setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);
         JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        GroupLayout gl_contentPane = new GroupLayout(contentPane);
-        gl_contentPane.setHorizontalGroup(
-                gl_contentPane.createParallelGroup(Alignment.LEADING)
+        GroupLayout glContentPane = new GroupLayout(contentPane);
+        glContentPane.setHorizontalGroup(
+                glContentPane.createParallelGroup(Alignment.LEADING)
                         .addGap(0, 424, Short.MAX_VALUE)
         );
-        gl_contentPane.setVerticalGroup(
-                gl_contentPane.createParallelGroup(Alignment.LEADING)
+        glContentPane.setVerticalGroup(
+                glContentPane.createParallelGroup(Alignment.LEADING)
                         .addGap(0, 251, Short.MAX_VALUE)
         );
-        contentPane.setLayout(gl_contentPane);
+        contentPane.setLayout(glContentPane);
 
         JPanel panel = new JPanel();
         JPanel panelUp = new JPanel();
@@ -75,7 +76,7 @@ public class GUI extends JFrame{
         calculateBtn = new JButton("Calculate");
         panelDown.add(calculateBtn, "name_50649954272336");
         ImageIcon loading = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ajax-loader.gif")));
-        JLabel waitingSpinner = new JLabel("", loading, JLabel.CENTER);
+        JLabel waitingSpinner = new JLabel("", loading, SwingConstants.CENTER);
         panel.add(panelUp);
         percentageLabel = new JLabel("%");
         Objects.requireNonNull(loadingSpinnerPanel).add(percentageLabel);
