@@ -147,7 +147,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
             try {
                 String methodCallExprQualifiedName = methodCallExpr.resolve().getQualifiedName();
                 String methodCallExprClass = methodCallExprQualifiedName.substring(0, methodCallExprQualifiedName.lastIndexOf("."));
-                if (this.withinAnalysisBounds(methodCallExprClass))
+                if (withinAnalysisBounds(methodCallExprClass))
                     methodsCalled.add(methodCallExpr.resolve().getQualifiedName());
             } catch (Throwable ignored) {
             }
@@ -179,7 +179,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      */
     private int calculateDIT() {
         try {
-            return (int) javaClass.resolve().getAllAncestors().stream().filter(ancestor -> this.withinAnalysisBounds(ancestor.getQualifiedName())).count();
+            return (int) javaClass.resolve().getAllAncestors().stream().filter(ancestor -> withinAnalysisBounds(ancestor.getQualifiedName())).count();
         } catch (Throwable t) {
             return 0;
         }
@@ -431,7 +431,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
         superClasses
                 .stream()
-                .filter(superClass -> this.withinAnalysisBounds(superClass.getQualifiedName()))
+                .filter(superClass -> withinAnalysisBounds(superClass.getQualifiedName()))
                 .forEach(ancestors::add);
 
         try {
@@ -591,7 +591,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      */
     private void registerFieldAccess(String fieldName) {
         registerCoupling(javaClass.resolve().getQualifiedName());
-        this.methodIntersection.get(this.methodIntersection.size() - 1).add(fieldName);
+        methodIntersection.get(methodIntersection.size() - 1).add(fieldName);
     }
 
     /**
@@ -601,7 +601,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      *                  the class we are referring to
      */
     private void registerCoupling(String className) {
-        if (this.withinAnalysisBounds(className)) {
+        if (withinAnalysisBounds(className)) {
             registerEfferentCoupling(className);
             registerAfferentCoupling(className);
         }
