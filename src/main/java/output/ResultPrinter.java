@@ -8,6 +8,10 @@ import java.nio.file.Paths;
 
 public class ResultPrinter {
 
+    private ResultPrinter() {
+
+    }
+
     private static final String[] HEADERS = { "Name",
             "WMC", "DIT", "NOCC", "CBO", "RFC", "LCOM",
             "WMC*", "NOM", "MPC", "DAC", "SIZE1", "SIZE2", "DSC", "NOH", "ANA", "DAM", "DCC", "CAMC", "MOA", "MFA", "NOP", "CIS", "NPM",

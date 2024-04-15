@@ -147,7 +147,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
             try {
                 String methodCallExprQualifiedName = methodCallExpr.resolve().getQualifiedName();
                 String methodCallExprClass = methodCallExprQualifiedName.substring(0, methodCallExprQualifiedName.lastIndexOf("."));
-                if (this.withinAnalysisBounds(methodCallExprClass))
+                if (withinAnalysisBounds(methodCallExprClass))
                     methodsCalled.add(methodCallExpr.resolve().getQualifiedName());
             } catch (Throwable ignored) {
             }
@@ -179,7 +179,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      */
     private int calculateDIT() {
         try {
-            return (int) javaClass.resolve().getAllAncestors().stream().filter(ancestor -> this.withinAnalysisBounds(ancestor.getQualifiedName())).count();
+            return (int) javaClass.resolve().getAllAncestors().stream().filter(ancestor -> withinAnalysisBounds(ancestor.getQualifiedName())).count();
         } catch (Throwable t) {
             return 0;
         }
@@ -431,13 +431,12 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
         superClasses
                 .stream()
-                .filter(superClass -> this.withinAnalysisBounds(superClass.getQualifiedName()))
+                .filter(superClass -> withinAnalysisBounds(superClass.getQualifiedName()))
                 .forEach(ancestors::add);
 
         try {
             ancestors.addAll(getValidInterfaces(javaClass.resolve().getAllAncestors()));
-        } catch (UnsolvedSymbolException ignored) {
-        }
+        } catch (UnsolvedSymbolException ignored){}
 
         Set<ResolvedReferenceType> ancestorsSet = new HashSet<>();
         List<MethodDeclaration> javaClassMethods = new ArrayList<>(javaClass.getMethods());
@@ -445,11 +444,12 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
         for (int i = 0; i < ancestors.size(); ++i) {
             ResolvedReferenceType ancestor = ancestors.get(i);
-            if (!ancestorsSet.contains(ancestor)) {
-                if (withinAnalysisBounds(ancestor.getQualifiedName())) {
+            if (!ancestorsSet.contains(ancestor) && withinAnalysisBounds(ancestor.getQualifiedName())) {
                     ancestorsSet.add(ancestor);
                     ancestors.addAll(getValidInterfaces(ancestor));
                     try {
+                        if (ancestor.getAllClassesAncestors().isEmpty())
+                            break;
                         ResolvedReferenceType ancestorSuperClass = ancestor.getAllClassesAncestors().get(ancestor.getAllClassesAncestors().size() - 1);
                         if (withinAnalysisBounds(ancestorSuperClass.getQualifiedName())) {
                             ancestors.add(ancestorSuperClass);
@@ -461,7 +461,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                     } catch (UnsolvedSymbolException ignored) {
                     }
                 }
-            }
+
         }
 
         /* remove all javaClass methods from ancestors */
@@ -472,7 +472,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         } catch (Throwable ignored) {
         }
 
-        ancestorMethods.removeIf(method -> (method.accessSpecifier().equals(AccessSpecifier.PRIVATE)) || method.toAst().isPresent());
+        ancestorMethods.removeIf(method -> (method.accessSpecifier().equals(AccessSpecifier.PRIVATE)));
         javaClassMethods.removeIf(BodyDeclaration::isConstructorDeclaration);
         if (ancestorMethods.size() + javaClassMethods.size() == 0)
             return 0.0;
@@ -516,8 +516,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
         for (int i = 0; i < ancestors.size(); ++i) {
             ResolvedReferenceType ancestor = ancestors.get(i);
-            if (!ancestorsSet.contains(ancestor)) {
-                if (withinAnalysisBounds(ancestor.getQualifiedName())) {
+            if (!ancestorsSet.contains(ancestor) && withinAnalysisBounds(ancestor.getQualifiedName())) {
                     ancestorsSet.add(ancestor);
                     try {
                         ancestors.addAll(getValidInterfaces(ancestor));
@@ -530,7 +529,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                         }
                     }
                 }
-            }
+
         }
         return ancestorsSet.size();
     }
@@ -591,7 +590,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      */
     private void registerFieldAccess(String fieldName) {
         registerCoupling(javaClass.resolve().getQualifiedName());
-        this.methodIntersection.get(this.methodIntersection.size() - 1).add(fieldName);
+        methodIntersection.get(methodIntersection.size() - 1).add(fieldName);
     }
 
     /**
@@ -601,7 +600,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      *                  the class we are referring to
      */
     private void registerCoupling(String className) {
-        if (this.withinAnalysisBounds(className)) {
+        if (withinAnalysisBounds(className)) {
             registerEfferentCoupling(className);
             registerAfferentCoupling(className);
         }
@@ -742,7 +741,6 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      */
     private void registerMethodInvocation(String className, String signature) {
         registerCoupling(className);
-//        responseSet.add(signature);
         methodsCalled.add(signature);
     }
 
@@ -758,10 +756,6 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         } catch (Throwable ignored) {
         }
 
-//        try {
-//            responseSet.add(method.resolve().getQualifiedSignature());
-//        } catch (Throwable ignored) {
-//        }
         investigateExceptions(method);
         investigateParameters(method);
         investigateInvocation(method);
