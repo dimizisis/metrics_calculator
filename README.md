@@ -2,6 +2,10 @@
 
 This is a project that calculates code metrics on Java Source Code (```.java``` files).
 
+## SonarCloud
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dimizisis_metrics_calculator&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=dimizisis_metrics_calculator)
+
 ## Requirements
 - [Apache Maven](https://maven.apache.org/) project management and comprehension tool.  
 
