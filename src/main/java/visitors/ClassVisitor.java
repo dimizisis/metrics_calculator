@@ -472,7 +472,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         } catch (Throwable ignored) {
         }
 
-        ancestorMethods.removeIf(method -> (method.accessSpecifier().equals(AccessSpecifier.PRIVATE)) || (method.toAst().isPresent() && method.toAst().get().isConstructorDeclaration()));
+        ancestorMethods.removeIf(method -> (method.accessSpecifier().equals(AccessSpecifier.PRIVATE)) || method.toAst().isPresent());
         javaClassMethods.removeIf(BodyDeclaration::isConstructorDeclaration);
         if (ancestorMethods.size() + javaClassMethods.size() == 0)
             return 0.0;
