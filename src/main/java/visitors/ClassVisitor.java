@@ -516,8 +516,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
         for (int i = 0; i < ancestors.size(); ++i) {
             ResolvedReferenceType ancestor = ancestors.get(i);
-            if (!ancestorsSet.contains(ancestor)) {
-                if (withinAnalysisBounds(ancestor.getQualifiedName())) {
+            if (!ancestorsSet.contains(ancestor) && withinAnalysisBounds(ancestor.getQualifiedName())) {
                     ancestorsSet.add(ancestor);
                     try {
                         ancestors.addAll(getValidInterfaces(ancestor));
@@ -530,7 +529,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                         }
                     }
                 }
-            }
+
         }
         return ancestorsSet.size();
     }
