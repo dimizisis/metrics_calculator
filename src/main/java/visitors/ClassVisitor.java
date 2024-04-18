@@ -616,7 +616,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     }
 
     /**
-     * Register afferent coupling of java class given (FanIn)
+     * Register afferent coupling of java class given (fanIn)
      *
      * @param className class name coupled with
      *                  the class we are referring to

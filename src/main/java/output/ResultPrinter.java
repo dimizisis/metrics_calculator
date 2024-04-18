@@ -19,7 +19,7 @@ public class ResultPrinter {
             "WMC", "DIT", "NOCC", "CBO", "RFC", "LCOM",
             "WMC*", "NOM", "MPC", "DAC", "SIZE1", "SIZE2", "DSC", "NOH", "ANA", "DAM", "DCC", "CAMC", "MOA", "MFA", "NOP", "CIS", "NPM",
             "Reusability", "Flexibility", "Understandability", "Functionality", "Extendibility", "Effectiveness",
-            "FanIn", "ClassNames" };
+            "fanIn", "ClassNames" };
 
 
     public static boolean printCSV(MetricsCalculator mc, String fullOutFilePath) {
