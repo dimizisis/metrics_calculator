@@ -16,6 +16,8 @@ import infrastructure.entities.Class;
 import infrastructure.entities.JavaFile;
 import infrastructure.entities.Project;
 import lombok.Getter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import visitors.ClassVisitor;
 
 import java.io.File;
@@ -29,6 +31,8 @@ public class MetricsCalculator {
     @Getter
     private final Project project;
     private AtomicInteger fileAnalysisProgressPercentage;
+
+    private static final Logger logger = LogManager.getLogger(MetricsCalculator.class);
 
     public MetricsCalculator(Project project) {
         this.project = project;
@@ -68,7 +72,7 @@ public class MetricsCalculator {
      * Get the project root
      */
     private ProjectRoot getProjectRoot(String projectDir) {
-        System.out.println("Collecting source roots...");
+        logger.info("Collecting source roots...");
         return new SymbolSolverCollectionStrategy()
                 .collect(Paths.get(projectDir));
     }
@@ -134,7 +138,7 @@ public class MetricsCalculator {
         AtomicInteger overallFileAnalysisProgress = new AtomicInteger(1);
         sourceRoots
                 .forEach(sourceRoot -> {
-                    System.out.print("Analysing Source Root: " + sourceRoot.getRoot().toString() + " (" + srcRootProgress + "/" + sourceRoots.size() + ")...");
+                    logger.info("Analysing Source Root: {} ({}/{})...", sourceRoot.getRoot().toString(), srcRootProgress, sourceRoots.size());
                     AtomicInteger fileAnalysisProgress = new AtomicInteger(1);
                     try {
                         List<ParseResult<CompilationUnit>> parseResults = sourceRoot.tryToParse();
@@ -142,7 +146,7 @@ public class MetricsCalculator {
                                 .stream()
                                 .filter(res -> res.getResult().isPresent())
                                 .forEach(res -> {
-                                    System.out.print("\rAnalysing Source Root: " + sourceRoot.getRoot().toString() + " (" + fileAnalysisProgress.getAndIncrement()*100/parseResults.size() + "%)" + " (" + srcRootProgress + "/" + sourceRoots.size() + ")...");
+                                    logger.info("\rAnalysing Source Root: {} ({}%) ({}/{})...", sourceRoot.getRoot().toString(), fileAnalysisProgress.getAndIncrement() * 100 / parseResults.size(), srcRootProgress, sourceRoots.size());
                                     analyzeCompilationUnit(res.getResult().get());
                                     int percentage = overallFileAnalysisProgress.getAndIncrement()*100/getProject().getJavaFiles().size();
                                     setOverallProgress(new AtomicInteger(percentage != 0 ? percentage : 1));
@@ -150,9 +154,7 @@ public class MetricsCalculator {
                     } catch (Exception ignored) {
                     }
                     srcRootProgress.getAndIncrement();
-                    System.out.println();
                 });
-        System.out.println();
     }
 
     /**

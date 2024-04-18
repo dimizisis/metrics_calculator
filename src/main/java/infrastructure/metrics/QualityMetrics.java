@@ -32,7 +32,7 @@ public class QualityMetrics {
     private Integer NOP;
     private Integer CIS;
     private Integer NPM;
-    private Integer FanIn;
+    private Integer fanIn;
     protected double reusability;
     protected double flexibility;
     protected double understandability;
@@ -64,7 +64,7 @@ public class QualityMetrics {
         this.NOP = 0;
         this.CIS = 0;
         this.NPM = 0;
-        this.FanIn = 0;
+        this.fanIn = 0;
         this.reusability = 0.0;
         this.flexibility = 0.0;
         this.understandability = 0.0;
@@ -102,7 +102,7 @@ public class QualityMetrics {
         this.NOP += o.getNOP();
         this.CIS += o.getCIS();
         this.NPM += o.getNPM();
-        this.FanIn += o.FanIn;
+        this.fanIn += o.fanIn;
         ++this.DSC;
     }
 
@@ -129,7 +129,7 @@ public class QualityMetrics {
         this.NOP = 0;
         this.CIS = 0;
         this.NPM = 0;
-        this.FanIn = 0;
+        this.fanIn = 0;
     }
 
     @Override
@@ -137,12 +137,12 @@ public class QualityMetrics {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         QualityMetrics that = (QualityMetrics) o;
-        return Objects.equals(DSC, that.DSC) && Objects.equals(DIT, that.DIT) && Objects.equals(NOCC, that.NOCC) && Objects.equals(RFC, that.RFC) && Objects.equals(LCOM, that.LCOM) && Objects.equals(WMC, that.WMC) && Objects.equals(NOM, that.NOM) && Objects.equals(MPC, that.MPC) && Objects.equals(DAC, that.DAC) && Objects.equals(CBO, that.CBO) && Objects.equals(SIZE1, that.SIZE1) && Objects.equals(SIZE2, that.SIZE2) && Objects.equals(NOH, that.NOH) && Objects.equals(ANA, that.ANA) && Objects.equals(DAM, that.DAM) && Objects.equals(DCC, that.DCC) && Objects.equals(CAMC, that.CAMC) && Objects.equals(MOA, that.MOA) && Objects.equals(MFA, that.MFA) && Objects.equals(NOP, that.NOP) && Objects.equals(CIS, that.CIS) && Objects.equals(NPM, that.NPM) && Objects.equals(FanIn, that.FanIn);
+        return Objects.equals(DSC, that.DSC) && Objects.equals(DIT, that.DIT) && Objects.equals(NOCC, that.NOCC) && Objects.equals(RFC, that.RFC) && Objects.equals(LCOM, that.LCOM) && Objects.equals(WMC, that.WMC) && Objects.equals(NOM, that.NOM) && Objects.equals(MPC, that.MPC) && Objects.equals(DAC, that.DAC) && Objects.equals(CBO, that.CBO) && Objects.equals(SIZE1, that.SIZE1) && Objects.equals(SIZE2, that.SIZE2) && Objects.equals(NOH, that.NOH) && Objects.equals(ANA, that.ANA) && Objects.equals(DAM, that.DAM) && Objects.equals(DCC, that.DCC) && Objects.equals(CAMC, that.CAMC) && Objects.equals(MOA, that.MOA) && Objects.equals(MFA, that.MFA) && Objects.equals(NOP, that.NOP) && Objects.equals(CIS, that.CIS) && Objects.equals(NPM, that.NPM) && Objects.equals(fanIn, that.fanIn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(DSC, DIT, NOCC, RFC, LCOM, WMC, NOM, MPC, DAC, CBO, SIZE1, SIZE2, NOH, ANA, DAM, DCC, CAMC, MOA, MFA, NOP, CIS, NPM, FanIn);
+        return Objects.hash(DSC, DIT, NOCC, RFC, LCOM, WMC, NOM, MPC, DAC, CBO, SIZE1, SIZE2, NOH, ANA, DAM, DCC, CAMC, MOA, MFA, NOP, CIS, NPM, fanIn);
     }
 
     @Override

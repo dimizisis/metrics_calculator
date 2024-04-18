@@ -158,8 +158,7 @@ public class GUI extends JFrame{
                 ResultPrinter.printCSV(mc, outputDirTextField.getText() + "/analysis_" + System.currentTimeMillis() / 1000 + ".csv");
                 JOptionPane.showMessageDialog(null, "Calculation complete! File with calculations saved in "+ outputDirTextField.getText(), "Success!", JOptionPane.INFORMATION_MESSAGE);
                 init();
-            } catch (Exception e2) {
-                e2.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
     }
