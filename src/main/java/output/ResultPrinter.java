@@ -1,6 +1,8 @@
 package output;
 
 import calculator.MetricsCalculator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,8 +10,9 @@ import java.nio.file.Paths;
 
 public class ResultPrinter {
 
-    private ResultPrinter() {
+    private static final Logger logger = LogManager.getLogger(ResultPrinter.class);
 
+    private ResultPrinter() {
     }
 
     private static final String[] HEADERS = { "Name",
@@ -43,7 +46,7 @@ public class ResultPrinter {
         output.replace(output.lastIndexOf("\t"), output.lastIndexOf("\t")+1, "\n");
         mc.getProject().getJavaFiles().forEach(javaFile -> output.append(javaFile.getPath()).append("\t").append(javaFile.getQualityMetrics()).append("\t").append(javaFile.getClassNames()).append("\n"));
 
-        System.out.println(output);
+        logger.info(output);
         return true;
     }
 
@@ -56,7 +59,7 @@ public class ResultPrinter {
         try {
             Files.write(Paths.get(path), data.toString().getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception was thrown: {}", e.getMessage());
             return false;
         }
         return true;

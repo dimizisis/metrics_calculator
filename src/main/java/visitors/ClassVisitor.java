@@ -106,8 +106,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
                 try {
                     setClassMetrics(currentClassObject);
-                } catch (Throwable t) {
-                    t.printStackTrace();
+                } catch(Throwable ignored) {
                 }
             }
         }
@@ -182,8 +181,8 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         try {
             return (int) javaClass.resolve().getAllAncestors().stream().filter(ancestor -> withinAnalysisBounds(ancestor.getQualifiedName())).count();
         } catch (Throwable t) {
-            return 0;
         }
+        return 0;
     }
 
     /**
@@ -195,20 +194,20 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     private double calculateCC() {
 
         float total_ifs = 0.0f;
-        int valid_classes = 0;
+        int validClasses = 0;
 
         for (MethodDeclaration method : javaClass.getMethods()) {
             int ifs;
             if (!method.isAbstract() && !method.isNative()) {
                 ifs = countIfs(method) + countSwitch(method) + 1;
                 total_ifs += ifs;
-                ++valid_classes;
+                ++validClasses;
             }
         }
         if (javaClass.getConstructors().isEmpty())
-            ++valid_classes;
+            ++validClasses;
 
-        return valid_classes > 0 ? (total_ifs / valid_classes) : -1;
+        return validClasses > 0 ? (total_ifs / validClasses) : -1;
     }
 
     /**
@@ -366,7 +365,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      */
     private double calculateCAMC() {
         List<MethodDeclaration> allMethods = javaClass.getMethods();
-        int num_of_methods = allMethods.size();
+        int methodCount = allMethods.size();
         List<String> num;
         List<String> denum = new ArrayList<>();
         double numerator = 0;
@@ -386,7 +385,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
             numerator += num.size();
 
         }
-        return (num_of_methods == 0 || denum.isEmpty()) ? -1 : numerator / (num_of_methods * denum.size());
+        return (methodCount == 0 || denum.isEmpty()) ? -1 : numerator / (methodCount * denum.size());
     }
 
     /**
@@ -395,11 +394,12 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      * @return DAM metric value
      */
     private double calculateDAM() {
-        double total_attributes, public_attributes;
+        double totalAttributes;
+        double publicAttributes;
         List<FieldDeclaration> javaClassAttribute = new ArrayList<>(javaClass.getFields());
-        total_attributes = javaClassAttribute.size();
-        public_attributes = javaClassAttribute.stream().filter(a -> (!a.isProtected()) && (!a.isPrivate())).count();
-        return total_attributes == 0 ? -1 : ((total_attributes - public_attributes) / total_attributes);
+        totalAttributes = javaClassAttribute.size();
+        publicAttributes = javaClassAttribute.stream().filter(a -> (!a.isProtected()) && (!a.isPrivate())).count();
+        return totalAttributes == 0 ? -1 : ((totalAttributes - publicAttributes) / totalAttributes);
     }
 
     /**
@@ -530,7 +530,6 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                         }
                     }
                 }
-
         }
         return ancestorsSet.size();
     }
@@ -579,7 +578,6 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                 }
             }
         } catch (Throwable t) {
-            return new ArrayList<>();
         }
         return validInterfaces;
     }
@@ -668,8 +666,8 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
             return classOptional.orElse(null);
         } catch (Throwable ignored) {
-            return null;
         }
+        return null;
     }
 
     /**

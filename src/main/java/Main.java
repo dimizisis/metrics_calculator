@@ -2,11 +2,16 @@ import calculator.MetricsCalculator;
 import gui.GUI;
 import infrastructure.entities.Project;
 import org.apache.commons.cli.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import output.ResultPrinter;
 
 import java.awt.*;
 
 public class Main {
+
+    private static final Logger logger = LogManager.getLogger(Main.class);
+
     public static void main(String[] args) {
 
         Options options = addOptions();
@@ -27,7 +32,7 @@ public class Main {
                 try {
                     new GUI();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Exception was thrown ", e);
                 }
             });
         }
@@ -41,7 +46,7 @@ public class Main {
         try {
             cmd = parser.parse(options, args);
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
             formatter.printHelp("utility-name", options);
             System.exit(1);
         }
@@ -54,7 +59,7 @@ public class Main {
 
     private static void checkArgs(String[] argv){
         if(argv.length != 0 && argv.length != 2){
-            System.out.println("Error - Missing arguments");
+            logger.error("Error - Missing arguments");
             System.exit(0);
         }
     }
