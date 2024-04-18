@@ -21,7 +21,7 @@ jobs:
         uses: pmd/pmd-github-action@v2
         with:
           rulesets: 'ruleset.xml'
-          analyzeModifiedFilesOnly: false
+          analyzeModifiedFilesOnly: true
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
         with:
