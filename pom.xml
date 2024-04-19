@@ -88,7 +88,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>Main</mainClass>
+                            <mainClass>main.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -102,7 +102,7 @@
                 <version>3.14.0</version>
                 <configuration>
                     <rulesets>
-                        <ruleset>ruleset.xml</ruleset>
+                        <ruleset>src/main/resources/ruleset.xml</ruleset>
                     </rulesets>
                 </configuration>
             </plugin>

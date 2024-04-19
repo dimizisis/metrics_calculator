@@ -1,3 +1,5 @@
+package main;
+
 import calculator.MetricsCalculator;
 import gui.GUI;
 import infrastructure.entities.Project;
