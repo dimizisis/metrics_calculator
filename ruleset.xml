@@ -35,13 +35,43 @@
     <rule ref="category/java/performance.xml" />
     <rule ref="category/java/security.xml" />
 
-    <rule name="AllmanStyleRule"
-          message="Ensure Allman style braces and spaces in conditions."
-          class="rules.AllmanStyleRule">
+    <!-- Rule for Allman style braces -->
+    <rule name="AllmanStyleBraces"
+          message="Curly braces should start on a new line (Allman style)."
+          language="java"
+          class="net.sourceforge.pmd.lang.rule.XPathRule">
         <description>
-            This rule checks that the class and if statements follow the Allman style and have spaces around conditions.
+            Checks that all class and method blocks open their curly braces on a new line.
         </description>
         <priority>3</priority>
+        <properties>
+            <property name="version" value="2.0"/>
+            <property name="xpath">
+                <value><![CDATA[
+//ClassOrInterfaceDeclaration[following-sibling::Block and not(following-sibling::Block/preceding-sibling::*[1][self::Annotation])]
+| //MethodDeclaration[following-sibling::Block and not(following-sibling::Block/preceding-sibling::*[1][self::Annotation])]
+                ]]></value>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Rule for spacing around conditions in parentheses -->
+    <rule name="SpaceAroundConditions"
+          message="Conditions should have a space after the opening parenthesis and before the closing parenthesis."
+          language="java"
+          class="net.sourceforge.pmd.lang.rule.XPathRule">
+        <description>
+            Ensures there is a space after opening and before closing the parentheses in conditions.
+        </description>
+        <priority>3</priority>
+        <properties>
+            <property name="version" value="2.0"/>
+            <property name="xpath">
+                <value><![CDATA[
+//IfStatement[not(matches(./Expression/PrimaryPrefix/PrimaryExpression, '\(\s.*\s\)'))]
+                ]]></value>
+            </property>
+        </properties>
     </rule>
 
 </ruleset>
