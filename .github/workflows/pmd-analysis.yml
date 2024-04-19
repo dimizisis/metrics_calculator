@@ -17,12 +17,11 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Run PMD (Java)
-        uses: pmd/pmd-github-action@v2
+      - name: Run PMD through Maven
+        run: mvn pmd:pmd
+
+      - name: Upload PMD report
+        uses: actions/upload-artifact@v2
         with:
-          rulesets: 'ruleset.xml'
-          analyzeModifiedFilesOnly: false
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: pmd-report.sarif
+          name: pmd-report
+          path: target/pmd.xml
