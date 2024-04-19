@@ -35,4 +35,13 @@
     <rule ref="category/java/performance.xml" />
     <rule ref="category/java/security.xml" />
 
+    <rule name="AllmanStyleRule"
+          message="Ensure Allman style braces and spaces in conditions."
+          class="rules.AllmanStyleRule">
+        <description>
+            This rule checks that the class and if statements follow the Allman style and have spaces around conditions.
+        </description>
+        <priority>3</priority>
+    </rule>
+
 </ruleset>
