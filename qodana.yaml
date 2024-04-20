@@ -1,4 +1,3 @@
-version: "1.0"
-linter: jetbrains/qodana-jvm-community:2023.3
-include:
-  - name: UNCHECKED_WARNING
+version: 1.0
+profile:
+  name: qodana.recommended
