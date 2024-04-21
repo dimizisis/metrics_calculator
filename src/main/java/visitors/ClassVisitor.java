@@ -481,6 +481,84 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     }
 
     /**
+     * Calculate MFA metric value for
+     * the class we are referring to
+     *
+     * @return MFA metric value
+     */
+    private double calculateMFAv2() {
+        List<ResolvedReferenceType> ancestors = new ArrayList<>();
+        List<ResolvedReferenceType> superClasses;
+
+        ClassOrInterfaceDeclaration javaClass = (ClassOrInterfaceDeclaration) this.javaClass;
+
+        try {
+            superClasses = javaClass
+                    .getExtendedTypes()
+                    .stream()
+                    .map(extendedType -> {
+                        try {
+                            return extendedType.resolve().asReferenceType();
+                        } catch (Throwable t) {
+                            return null;
+                        }
+                    })
+                    .collect(Collectors.toList());
+        } catch (Throwable t) {
+            return 0.0F;
+        }
+
+        superClasses
+                .stream()
+                .filter(superClass -> withinAnalysisBounds(superClass.getQualifiedName()))
+                .forEach(ancestors::add);
+
+        try {
+            ancestors.addAll(getValidInterfaces(javaClass.resolve().getAllAncestors()));
+        } catch (UnsolvedSymbolException ignored){}
+
+        Set<ResolvedReferenceType> ancestorsSet = new HashSet<>();
+        List<MethodDeclaration> javaClassMethods = new ArrayList<>(javaClass.getMethods());
+        Set<ResolvedMethodDeclaration> ancestorMethods = new HashSet<>();
+
+        for (int i = 0; i < ancestors.size(); ++i) {
+            ResolvedReferenceType ancestor = ancestors.get(i);
+            if (!ancestorsSet.contains(ancestor) && withinAnalysisBounds(ancestor.getQualifiedName())) {
+                ancestorsSet.add(ancestor);
+                ancestors.addAll(getValidInterfaces(ancestor));
+                try {
+                    if (ancestor.getAllClassesAncestors().isEmpty())
+                        break;
+                    ResolvedReferenceType ancestorSuperClass = ancestor.getAllClassesAncestors().get(ancestor.getAllClassesAncestors().size() - 1);
+                    if (withinAnalysisBounds(ancestorSuperClass.getQualifiedName())) {
+                        ancestors.add(ancestorSuperClass);
+                    }
+                } catch (UnsolvedSymbolException ignored) {
+                }
+                try {
+                    ancestorMethods.addAll(ancestor.getAllMethods());
+                } catch (UnsolvedSymbolException ignored) {
+                }
+            }
+        }
+
+        /* remove all javaClass methods from ancestors */
+        try {
+            ancestorMethods.forEach(ancestorMethod -> javaClassMethods.stream()
+                    .filter(method -> ancestorMethod.getQualifiedSignature().equals(method.resolve().getQualifiedSignature()))
+                    .forEach(method -> ancestorMethods.remove(ancestorMethod)));
+        } catch (Throwable ignored) {
+        }
+
+        ancestorMethods.removeIf(method -> (method.accessSpecifier().equals(AccessSpecifier.PRIVATE)));
+        javaClassMethods.removeIf(BodyDeclaration::isConstructorDeclaration);
+        if (ancestorMethods.size() + javaClassMethods.size() == 0)
+            return 0.0;
+
+        return (double) ancestorMethods.size() / (ancestorMethods.size() + javaClassMethods.size());
+    }
+
+    /**
      * Calculate NOP metric value for
      * the class we are referring to
      *
