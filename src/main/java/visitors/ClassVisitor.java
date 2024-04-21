@@ -462,7 +462,6 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                     } catch (UnsolvedSymbolException ignored) {
                     }
                 }
-
         }
 
         /* remove all javaClass methods from ancestors */
