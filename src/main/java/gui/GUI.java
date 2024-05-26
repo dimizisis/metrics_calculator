@@ -147,7 +147,7 @@ public class GUI extends JFrame{
                 outputDirTextField.setEnabled(false);
                 loadingSpinnerPanel.setVisible(true);
                 setSize(new Dimension(370, 185));
-                Project project = new Project(inputDirTextField.getText().replace("\\", "/"));
+                Project project = new Project(inputDirTextField.getText());
                 MetricsCalculator mc = new MetricsCalculator(project);
                 new PercentageUpdateThread(mc).start();
                 if (mc.start() == -1) {

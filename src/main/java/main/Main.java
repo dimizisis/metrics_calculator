@@ -21,8 +21,8 @@ public class Main {
         checkArgs(cmd.getArgs());
 
         if (cmd.getArgs().length != 0) {
-            Project project = new Project(args[0].replace("\\", "/"));
-            String outputFilename = cmd.getArgs()[1].replace("\\", "/");
+            Project project = new Project(args[0]);
+            String outputFilename = cmd.getArgs()[1];
             MetricsCalculator mc = new MetricsCalculator(project);
             mc.start();
             if (outputFilename.equals("str"))

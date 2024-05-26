@@ -13,7 +13,7 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedReferenceType;
-import infrastructure.entities.Class;
+import infrastructure.entities.JavaClass;
 import infrastructure.entities.JavaFile;
 import infrastructure.metrics.QualityMetrics;
 
@@ -58,11 +58,11 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                 return;
 
             if (javaClass.getFullyQualifiedName().isPresent()) {
-                Optional<Class> currentClassObjectOptional = jf.getClasses().stream()
+                Optional<JavaClass> currentClassObjectOptional = jf.getClasses().stream()
                         .filter(cl -> cl.getQualifiedName().equals(javaClass.getFullyQualifiedName().get()))
                         .findFirst();
 
-                Class currentClassObject = currentClassObjectOptional.orElse(null);
+                JavaClass currentClassObject = currentClassObjectOptional.orElse(null);
 
                 if (Objects.isNull(currentClassObject))
                     return;
@@ -92,11 +92,11 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                 return;
 
             if (javaClass.getFullyQualifiedName().isPresent()) {
-                Optional<Class> currentClassObjectOptional = jf.getClasses().stream()
+                Optional<JavaClass> currentClassObjectOptional = jf.getClasses().stream()
                         .filter(cl -> cl.getQualifiedName().equals(javaClass.getFullyQualifiedName().get()))
                         .findFirst();
 
-                Class currentClassObject = currentClassObjectOptional.orElse(null);
+                JavaClass currentClassObject = currentClassObjectOptional.orElse(null);
 
                 if (Objects.isNull(currentClassObject))
                     return;
@@ -112,30 +112,32 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         }
     }
 
-    private void setClassMetrics(Class currentClassObject) {
-        currentClassObject.getQualityMetrics().setComplexity(calculateCC());
-        currentClassObject.getQualityMetrics().setLCOM((double) calculateLCOM());
-        currentClassObject.getQualityMetrics().setSIZE1(calculateSize1());
-        currentClassObject.getQualityMetrics().setSIZE2(calculateSize2());
-        currentClassObject.getQualityMetrics().setMPC(calculateMPC());
-        currentClassObject.getQualityMetrics().setWMC(calculateWMC());
-        currentClassObject.getQualityMetrics().setRFC(calculateRFC(currentClassObject.getQualityMetrics().getWMC()));
-        currentClassObject.getQualityMetrics().setDAC(calculateDAC());
-        currentClassObject.getQualityMetrics().setCBO((double) efferentCoupledClasses.size());
-        currentClassObject.getQualityMetrics().setDIT(calculateDIT());
-        currentClassObject.getQualityMetrics().setNOM(currentClassObject.getQualityMetrics().getWMC());
-        currentClassObject.getQualityMetrics().setCAMC(calculateCAMC());
-        currentClassObject.getQualityMetrics().setANA(calculateANA());
-        currentClassObject.getQualityMetrics().setDCC((double) efferentCoupledClasses.size());
-        currentClassObject.getQualityMetrics().setDSC(calculateDSC());
-        currentClassObject.getQualityMetrics().setMFA(calculateMFA());
-        currentClassObject.getQualityMetrics().setDAM(calculateDAM());
-        currentClassObject.getQualityMetrics().setCIS(calculateCIS());
-        currentClassObject.getQualityMetrics().setMOA(calculateMOA());
-        currentClassObject.getQualityMetrics().setNPM(currentClassObject.getQualityMetrics().getCIS());
-        currentClassObject.getQualityMetrics().setNOP(calculateNOP());
-        currentClassObject.getQualityMetrics().setNOH(calculateNOH(currentClassObject.getQualityMetrics()));
+    private void setClassMetrics(JavaClass currentClassObject) {
+        QualityMetrics qm = currentClassObject.getQualityMetrics();
+        qm.setComplexity(calculateCC());
+        qm.setLcom(calculateLCOM());
+        qm.setSize1(calculateSize1());
+        qm.setSize2(calculateSize2());
+        qm.setMpc(calculateMPC());
+        qm.setWmc(calculateWMC());
+        qm.setRfc(calculateRFC(qm.getWmc()));
+        qm.setDac(calculateDAC());
+        qm.setCbo((double) efferentCoupledClasses.size());
+        qm.setDit(calculateDIT());
+        qm.setNom(qm.getWmc());
+        qm.setCamc(calculateCAMC());
+        qm.setAna(calculateANA());
+        qm.setDcc((double) efferentCoupledClasses.size());
+        qm.setDsc(calculateDSC());
+        qm.setMfa(calculateMFA());
+        qm.setDam(calculateDAM());
+        qm.setCis(calculateCIS());
+        qm.setMoa(calculateMOA());
+        qm.setNpm(qm.getCis());
+        qm.setNop(calculateNOP());
+        qm.setNoh(calculateNOH(qm));
     }
+
 
     /**
      * Calculate MPC metric value for the class we are referring to
@@ -286,22 +288,27 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      *
      * @return LCOM metric value
      */
-    private int calculateLCOM() {
-        javaClass.getMethods().forEach(methodDeclaration -> methodIntersection.add(new TreeSet<>()));
-        int lcom = 0;
-        for (int i = 0; i < methodIntersection.size(); ++i) {
-            for (int j = i + 1; j < methodIntersection.size(); ++j) {
-                AbstractSet<String> intersection = (TreeSet<String>) (methodIntersection.get(i)).clone();
-                if ((!intersection.isEmpty()) || (!methodIntersection.isEmpty())) {
+    private double calculateLCOM() {
+        /* Initialize method intersection sets for each method */
+        javaClass.getMethods().forEach(method -> methodIntersection.add(new TreeSet<>()));
+
+        double lcom = 0.0;
+        int methodCount = methodIntersection.size();
+
+        for (int i = 0; i < methodCount; ++i) {
+            for (int j = i + 1; j < methodCount; ++j) {
+                Set<String> intersection = new TreeSet<>(methodIntersection.get(i));
+                if (!intersection.isEmpty() && !methodIntersection.get(j).isEmpty()) {
                     intersection.retainAll(methodIntersection.get(j));
-                    if (intersection.isEmpty())
+                    if (intersection.isEmpty()) {
                         ++lcom;
-                    else
+                    } else {
                         --lcom;
+                    }
                 }
             }
         }
-        return methodIntersection.isEmpty() ? -1 : Math.max(lcom, 0);
+        return methodCount == 0.0 ? -1.0 : Math.max(lcom, 0.0);
     }
 
     private double calculateWMC() {
@@ -357,35 +364,26 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         return publicMethods;
     }
 
-    /**
-     * Calculate CAMC metric value for
-     * the class we are referring to
-     *
-     * @return CAMC metric value
-     */
     private double calculateCAMC() {
         List<MethodDeclaration> allMethods = javaClass.getMethods();
         int methodCount = allMethods.size();
-        List<String> num;
-        List<String> denum = new ArrayList<>();
-        double numerator = 0;
 
-        for (MethodDeclaration all_method : allMethods) {
-            num = new ArrayList<>();
-            List<Type> t = new ArrayList<>();
-            for (Parameter p : all_method.getParameters())
-                t.add(p.getType());
-
-            for (Type type : t) {
-                if (!num.contains(type.asString()))
-                    num.add(type.asString());
-                if (!denum.contains(type.asString()))
-                    denum.add(type.asString());
-            }
-            numerator += num.size();
-
+        if (methodCount == 0) {
+            return -1;
         }
-        return (methodCount == 0 || denum.isEmpty()) ? -1 : numerator / (methodCount * denum.size());
+
+        Set<String> denum = new HashSet<>();
+        double numerator = allMethods.stream()
+                .mapToDouble(method -> {
+                    Set<String> num = method.getParameters().stream()
+                            .map(param -> param.getType().asString())
+                            .collect(Collectors.toSet());
+                    denum.addAll(num);
+                    return num.size();
+                })
+                .sum();
+
+        return denum.isEmpty() ? -1 : numerator / (methodCount * denum.size());
     }
 
     /**
@@ -495,7 +493,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     }
 
     private int calculateNOH(QualityMetrics currentQualityMetrics) {
-        return (currentQualityMetrics.getNOCC() > 0 && currentQualityMetrics.getANA() == 0) ? 1 : 0;
+        return (currentQualityMetrics.getNocc() > 0 && currentQualityMetrics.getAna() == 0) ? 1 : 0;
     }
 
     /**
@@ -623,7 +621,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      */
     private void registerAfferentCoupling(String className) {
         try {
-            Class classObject = findClassByQualifiedName(className);
+            JavaClass classObject = findClassByQualifiedName(className);
             if (Objects.nonNull(classObject) && !afferentCoupledClasses.contains(className)) {
                 classObject.getQualityMetrics().setFanIn(classObject.getQualityMetrics().getFanIn() + 1);
                 afferentCoupledClasses.add(className);
@@ -644,17 +642,17 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                 return;
             }
             registerCoupling(extendedTypeQualifiedName);
-            Class extendedClassObject = findClassByQualifiedName(extendedTypeQualifiedName);
+            JavaClass extendedClassObject = findClassByQualifiedName(extendedTypeQualifiedName);
             if (Objects.nonNull(extendedClassObject))
-                extendedClassObject.getQualityMetrics().setNOCC(extendedClassObject.getQualityMetrics().getNOCC() + 1);
+                extendedClassObject.getQualityMetrics().setNocc(extendedClassObject.getQualityMetrics().getNocc() + 1);
         }
     }
 
-    private Class findClassByQualifiedName(String classQualifiedName) {
+    private JavaClass findClassByQualifiedName(String classQualifiedName) {
         try {
             Optional<JavaFile> jfOptional = javaFiles
                     .stream()
-                    .filter(javaFile -> javaFile.getClasses().contains(new Class(classQualifiedName)))
+                    .filter(javaFile -> javaFile.getClasses().contains(new JavaClass(classQualifiedName)))
                     .findFirst();
 
             JavaFile jf = jfOptional.orElse(null);
@@ -662,7 +660,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
             if (Objects.isNull(jf))
                 return null;
 
-            Optional<Class> classOptional = jf.getClasses().stream().filter(cl -> cl.getQualifiedName().equals(classQualifiedName)).findFirst();
+            Optional<JavaClass> classOptional = jf.getClasses().stream().filter(cl -> cl.getQualifiedName().equals(classQualifiedName)).findFirst();
 
             return classOptional.orElse(null);
         } catch (Throwable ignored) {
@@ -762,12 +760,11 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     }
 
     private boolean withinAnalysisBounds(String name) {
-        for (JavaFile javaFile : javaFiles) {
-            if (javaFile.getClasses().contains(new Class(name))) {
-                return true;
-            }
-        }
-        return false;
+        JavaClass targetClass = new JavaClass(name);
+        return javaFiles.stream()
+                .flatMap(javaFile -> javaFile.getClasses().stream())
+                .anyMatch(javaClass -> javaClass.equals(targetClass));
     }
+
 
 }

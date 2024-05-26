@@ -26,7 +26,7 @@ public class ResultPrinter {
         StringBuilder output = new StringBuilder();
         appendHeaders(output, "\t");
         output.replace(output.lastIndexOf("\t"), output.lastIndexOf("\t")+1, "\n");
-        mc.getProject().getJavaFiles().forEach(javaFile -> output.append(javaFile.getPath()).append("\t").append(javaFile.getQualityMetrics()).append("\t").append(javaFile.getClassNames()).append("\n"));
+        mc.getProject().getJavaFiles().forEach(javaFile -> output.append(javaFile.getPath().replace("\\", "/")).append("\t").append(javaFile.getQualityMetrics()).append("\t").append(javaFile.getClassNames()).append("\n"));
 
         return writeFile(fullOutFilePath, output);
     }
@@ -35,7 +35,7 @@ public class ResultPrinter {
         StringBuilder output = new StringBuilder();
         appendHeaders(output, delimiter);
         output.replace(output.lastIndexOf(delimiter), output.lastIndexOf(delimiter)+1, "\n");
-        mc.getProject().getJavaFiles().forEach(javaFile -> output.append(javaFile.getPath()).append(delimiter).append(javaFile.getQualityMetrics().toString(delimiter)).append(delimiter).append(javaFile.getClassNames()).append("\n"));
+        mc.getProject().getJavaFiles().forEach(javaFile -> output.append(javaFile.getPath().replace("\\", "/")).append(delimiter).append(javaFile.getQualityMetrics().toString(delimiter)).append(delimiter).append(javaFile.getClassNames()).append("\n"));
 
         return writeFile(fullOutFilePath, output);
     }
@@ -44,7 +44,7 @@ public class ResultPrinter {
         StringBuilder output = new StringBuilder();
         appendHeaders(output, "\t");
         output.replace(output.lastIndexOf("\t"), output.lastIndexOf("\t")+1, "\n");
-        mc.getProject().getJavaFiles().forEach(javaFile -> output.append(javaFile.getPath()).append("\t").append(javaFile.getQualityMetrics()).append("\t").append(javaFile.getClassNames()).append("\n"));
+        mc.getProject().getJavaFiles().forEach(javaFile -> output.append(javaFile.getPath().replace("\\", "/")).append("\t").append(javaFile.getQualityMetrics()).append("\t").append(javaFile.getClassNames()).append("\n"));
 
         logger.info(output);
         return true;

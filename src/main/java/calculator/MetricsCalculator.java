@@ -12,7 +12,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
-import infrastructure.entities.Class;
+import infrastructure.entities.JavaClass;
 import infrastructure.entities.JavaFile;
 import infrastructure.entities.Project;
 import lombok.Getter;
@@ -110,12 +110,12 @@ public class MetricsCalculator {
                                     .filter(cu -> cu.getResult().get().getStorage().isPresent())
                                     .forEach(cu -> {
                                         try {
-                                            project.getJavaFiles().add(new JavaFile(cu.getResult().get().getStorage().get().getPath().toString().replace("\\", "/").replace(project.getClonePath(), "").substring(1),
+                                            project.getJavaFiles().add(new JavaFile(cu.getResult().get().getStorage().get().getPath().toString().replace(project.getClonePath(), "").substring(1),
                                                     cu.getResult().get().findAll(ClassOrInterfaceDeclaration.class)
                                                             .stream()
                                                             .filter(classOrInterfaceDeclaration -> classOrInterfaceDeclaration.getFullyQualifiedName().isPresent())
                                                             .map(classOrInterfaceDeclaration -> classOrInterfaceDeclaration.getFullyQualifiedName().get())
-                                                            .map(Class::new)
+                                                            .map(JavaClass::new)
                                                             .collect(Collectors.toSet())));
                                         } catch (Throwable ignored) {
                                         }
@@ -175,7 +175,7 @@ public class MetricsCalculator {
     private void analyzeClassOrInterfaces(CompilationUnit cu) {
         cu.findAll(ClassOrInterfaceDeclaration.class).forEach(cl -> {
             try {
-                cl.accept(new ClassVisitor(project.getJavaFiles(), cu.getStorage().get().getPath().toString().replace("\\", "/").replace(project.getClonePath(), "").substring(1), cl), null);
+                cl.accept(new ClassVisitor(project.getJavaFiles(), cu.getStorage().get().getPath().toString().replace(project.getClonePath(), "").substring(1), cl), null);
             } catch (Exception ignored) {
             }
         });
@@ -189,7 +189,7 @@ public class MetricsCalculator {
     private void analyzeEnums(CompilationUnit cu) {
         cu.findAll(EnumDeclaration.class).forEach(cl -> {
             try {
-                cl.accept(new ClassVisitor(project.getJavaFiles(), cu.getStorage().get().getPath().toString().replace("\\", "/").replace(project.getClonePath(), "").substring(1), cl), null);
+                cl.accept(new ClassVisitor(project.getJavaFiles(), cu.getStorage().get().getPath().toString().replace(project.getClonePath(), "").substring(1), cl), null);
             } catch (Exception ignored) {
             }
         });

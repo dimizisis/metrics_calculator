@@ -13,10 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JavaFile {
 
     private String path;
-    private Set<Class> classes;
+    private Set<JavaClass> classes;
     private QualityMetrics qualityMetrics;
 
-    public JavaFile(String path, Set<Class> classes) {
+    public JavaFile(String path, Set<JavaClass> classes) {
         this.path = path;
         this.qualityMetrics = new QualityMetrics();
         this.classes = classes;
@@ -34,25 +34,27 @@ public class JavaFile {
     }
 
     public void aggregateMetrics() {
-        for (Class aClass : getClasses()) {
+        for (JavaClass aClass : getClasses()) {
             getQualityMetrics().add(aClass.getQualityMetrics());
         }
         setQMOODMetrics();
     }
 
     private void setQMOODMetrics() {
-        getQualityMetrics().setReusability(-0.25 * getQualityMetrics().getDCC() + 0.25 * getQualityMetrics().getCAMC() + 0.5 * getQualityMetrics().getNPM() + 0.5 * getQualityMetrics().getDSC());
-        getQualityMetrics().setFlexibility(-0.25 * getQualityMetrics().getDCC() + 0.25 * getQualityMetrics().getDAM() + 0.5 * getQualityMetrics().getMOA() + 0.5 * getQualityMetrics().getNOP());
-        getQualityMetrics().setUnderstandability(-0.33 * getQualityMetrics().getANA() + 0.33 * getQualityMetrics().getDAM() + 0.33 * getQualityMetrics().getCAMC() - 0.33 * getQualityMetrics().getDCC() - 0.33 * getQualityMetrics().getNOP() - 0.33 * getQualityMetrics().getNOM() - 0.33 * getQualityMetrics().getDSC());
-        getQualityMetrics().setFunctionality(0.12 * getQualityMetrics().getCAMC() + 0.22 * getQualityMetrics().getNOP() + 0.22 * getQualityMetrics().getNPM() + 0.22 * getQualityMetrics().getDSC() + 0.22 * getQualityMetrics().getNOH());
-        getQualityMetrics().setExtendibility(0.5 * getQualityMetrics().getANA() - 0.5 * getQualityMetrics().getDCC() + 0.5 * getQualityMetrics().getMFA() + 0.5 * getQualityMetrics().getNOP());
-        getQualityMetrics().setEffectiveness(0.2 * getQualityMetrics().getANA() + 0.2 * getQualityMetrics().getDAM() + 0.2 * getQualityMetrics().getMOA() + 0.2 * getQualityMetrics().getMFA() + 0.2 * getQualityMetrics().getNOP());
+        QualityMetrics qm = getQualityMetrics();
+        qm.setReusability(-0.25 * qm.getDcc() + 0.25 * qm.getCamc() + 0.5 * qm.getNpm() + 0.5 * qm.getDsc());
+        qm.setFlexibility(-0.25 * qm.getDcc() + 0.25 * qm.getDam() + 0.5 * qm.getMoa() + 0.5 * qm.getNop());
+        qm.setUnderstandability(-0.33 * qm.getAna() + 0.33 * qm.getDam() + 0.33 * qm.getCamc() - 0.33 * qm.getDcc() - 0.33 * qm.getNop() - 0.33 * qm.getNom() - 0.33 * qm.getDsc());
+        qm.setFunctionality(0.12 * qm.getCamc() + 0.22 * qm.getNop() + 0.22 * qm.getNpm() + 0.22 * qm.getDsc() + 0.22 * qm.getNoh());
+        qm.setExtendibility(0.5 * qm.getAna() - 0.5 * qm.getDcc() + 0.5 * qm.getMfa() + 0.5 * qm.getNop());
+        qm.setEffectiveness(0.2 * qm.getAna() + 0.2 * qm.getDam() + 0.2 * qm.getMoa() + 0.2 * qm.getMfa() + 0.2 * qm.getNop());
     }
+
 
     public String getClassNames() {
         StringBuilder classesAsStringBuilder = new StringBuilder();
         String classesDelimiter = "/";
-        for (Class aClass : this.getClasses()) {
+        for (JavaClass aClass : this.getClasses()) {
             classesAsStringBuilder.append(aClass.getQualifiedName()).append(classesDelimiter);
         }
         if (classesAsStringBuilder.lastIndexOf(classesDelimiter) != -1)

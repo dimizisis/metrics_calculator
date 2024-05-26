@@ -8,12 +8,12 @@ import java.util.Objects;
 
 @Setter
 @Getter
-public class Class {
+public class JavaClass {
 
     private String qualifiedName;
     private QualityMetrics qualityMetrics;
 
-    public Class(String name) {
+    public JavaClass(String name) {
         this.qualifiedName = name;
         this.qualityMetrics = new QualityMetrics();
     }
@@ -22,7 +22,7 @@ public class Class {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Class aClass = (Class) o;
+        JavaClass aClass = (JavaClass) o;
         return Objects.equals(qualifiedName, aClass.qualifiedName);
     }
 

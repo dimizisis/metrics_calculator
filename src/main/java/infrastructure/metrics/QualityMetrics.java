@@ -9,29 +9,29 @@ import java.util.Objects;
 @Getter
 public class QualityMetrics {
 
-    private Integer DSC;
+    private Integer dsc;
     private Double complexity;
-    private Integer DIT;
-    private Integer NOCC;
-    private Double RFC;
-    private Double LCOM;
-    private Double WMC;
-    private Double NOM;
-    private Double MPC;
-    private Integer DAC;
-    private Double CBO;
-    private Integer SIZE1;
-    private Integer SIZE2;
-    private Integer NOH;
-    private Integer ANA;
-    private Double DAM;
-    private Double DCC;
-    private Double CAMC;
-    private Integer MOA;
-    private Double MFA;
-    private Integer NOP;
-    private Integer CIS;
-    private Integer NPM;
+    private Integer dit;
+    private Integer nocc;
+    private Double rfc;
+    private Double lcom;
+    private Double wmc;
+    private Double nom;
+    private Double mpc;
+    private Integer dac;
+    private Double cbo;
+    private Integer size1;
+    private Integer size2;
+    private Integer noh;
+    private Integer ana;
+    private Double dam;
+    private Double dcc;
+    private Double camc;
+    private Integer moa;
+    private Double mfa;
+    private Integer nop;
+    private Integer cis;
+    private Integer npm;
     private Integer fanIn;
     protected double reusability;
     protected double flexibility;
@@ -41,95 +41,139 @@ public class QualityMetrics {
     protected double effectiveness;
 
     public QualityMetrics() {
-        this.DSC = 0;
-        this.complexity = 0.0;
-        this.DIT = 0;
-        this.NOCC = 0;
-        this.RFC = 0.0;
-        this.LCOM = 0.0;
-        this.WMC = 0.0;
-        this.NOM = 0.0;
-        this.MPC = 0.0;
-        this.DAC = 0;
-        this.CBO = 0.0;
-        this.SIZE1 = 0;
-        this.SIZE2 = 0;
-        this.NOH = 0;
-        this.ANA = 0;
-        this.DAM = 0.0;
-        this.DCC = 0.0;
-        this.CAMC = 0.0;
-        this.MOA = 0;
-        this.MFA = 0.0;
-        this.NOP = 0;
-        this.CIS = 0;
-        this.NPM = 0;
-        this.fanIn = 0;
-        this.reusability = 0.0;
-        this.flexibility = 0.0;
-        this.understandability = 0.0;
-        this.functionality = 0.0;
-        this.extendibility = 0.0;
-        this.effectiveness = 0.0;
+        dsc = 0;
+        complexity = 0.0;
+        dit = 0;
+        nocc = 0;
+        rfc = 0.0;
+        lcom = 0.0;
+        wmc = 0.0;
+        nom = 0.0;
+        mpc = 0.0;
+        dac = 0;
+        cbo = 0.0;
+        size1 = 0;
+        size2 = 0;
+        noh = 0;
+        ana = 0;
+        dam = 0.0;
+        dcc = 0.0;
+        camc = 0.0;
+        moa = 0;
+        mfa = 0.0;
+        nop = 0;
+        cis = 0;
+        npm = 0;
+        fanIn = 0;
+        reusability = 0.0;
+        flexibility = 0.0;
+        understandability = 0.0;
+        functionality = 0.0;
+        extendibility = 0.0;
+        effectiveness = 0.0;
     }
 
     public void add(QualityMetrics o) {
-        if (this.complexity <= 0 && o.getComplexity() < 0)
-            this.complexity = -1.0;
-        else if (o.getComplexity() > 0)
-            this.complexity += o.getComplexity();
-        this.complexity += o.getComplexity();
-        if (this.DIT >= 0 && o.getDIT() >= 0)
-            this.DIT += o.getDIT();
-        this.NOCC += o.getNOCC();
-        this.RFC += o.getRFC();
-        if (this.LCOM >= 0 && o.getLCOM() >= 0.0)
-            this.LCOM += o.getLCOM();
-        this.WMC += o.getWMC();
-        this.NOM += o.getNOM();
-        this.MPC += o.getMPC();
-        this.DAC += o.getDAC();
-        this.CBO += o.getCBO();
-        this.SIZE1 += o.getSIZE1();
-        this.SIZE2 += o.getSIZE2();
-        this.NOH += o.getNOH();
-        this.ANA += o.getANA();
-        this.DAM += o.getDAM();
-        this.DCC += o.getDCC();
-        this.CAMC += o.getCAMC();
-        this.MOA += o.getMOA();
-        this.MFA += o.getMFA();
-        this.NOP += o.getNOP();
-        this.CIS += o.getCIS();
-        this.NPM += o.getNPM();
-        this.fanIn += o.fanIn;
-        ++this.DSC;
+        complexity = performAdditionWithSanityCheck(complexity, o.getComplexity());
+        dit = performAdditionWithSanityCheck(dit, o.getDit());
+        lcom = performAdditionWithSanityCheck(lcom, o.getLcom());
+        nocc += o.getNocc();
+        rfc += o.getRfc();
+        wmc += o.getWmc();
+        nom += o.getNom();
+        mpc += o.getMpc();
+        dac += o.getDac();
+        cbo += o.getCbo();
+        size1 += o.getSize1();
+        size2 += o.getSize2();
+        noh += o.getNoh();
+        ana += o.getAna();
+        dam += o.getDam();
+        dcc += o.getDcc();
+        camc += o.getCamc();
+        moa += o.getMoa();
+        mfa += o.getMfa();
+        nop += o.getNop();
+        cis += o.getCis();
+        npm += o.getNpm();
+        fanIn += o.getFanIn();
+        ++dsc;
+    }
+
+    /**
+     * Performs addition of two metric values with sanity checks.
+     * Makes sense to use only for the metrics that may hold negative
+     * value.
+     *
+     * @param metricValue The current value of the metric.
+     * @param metricValueToBeAdded The value to be added to the metric.
+     * @return The updated metric value after performing sanity checks.
+     */
+    private double performAdditionWithSanityCheck(double metricValue, double metricValueToBeAdded) {
+        /* Ignore negative values to be added */
+        if (metricValueToBeAdded < 0.0) {
+            return metricValue;
+        }
+
+        /* Reset negative metric value to 0.0 */
+        if (metricValue < 0.0) {
+            metricValue = 0.0;
+        }
+
+        /* Perform the addition */
+        metricValue += metricValueToBeAdded;
+
+        return metricValue;
+    }
+
+    /**
+     * Performs addition of two metric values with sanity checks.
+     *
+     * @param metricValue The current value of the metric.
+     * @param metricValueToBeAdded The value to be added to the metric.
+     * @return The updated metric value after performing sanity checks.
+     */
+    private int performAdditionWithSanityCheck(int metricValue, int metricValueToBeAdded) {
+        /* Ignore negative values to be added */
+        if (metricValueToBeAdded < 0) {
+            return metricValue;
+        }
+
+        /* Reset negative metric value to 0 */
+        if (metricValue < 0) {
+            metricValue = 0;
+        }
+
+        /* Perform the addition */
+        metricValue += metricValueToBeAdded;
+
+        return metricValue;
     }
 
     public void zero() {
-        this.DSC = 0;
-        this.complexity = 0.0;
-        this.DIT = 0;
-        this.RFC = 0.0;
-        this.LCOM = 0.0;
-        this.WMC = 0.0;
-        this.NOM = 0.0;
-        this.MPC = 0.0;
-        this.DAC = 0;
-        this.CBO = 0.0;
-        this.SIZE1 = 0;
-        this.SIZE2 = 0;
-        this.NOH = 0;
-        this.ANA = 0;
-        this.DAM = 0.0;
-        this.DCC = 0.0;
-        this.CAMC = 0.0;
-        this.MOA = 0;
-        this.MFA = 0.0;
-        this.NOP = 0;
-        this.CIS = 0;
-        this.NPM = 0;
-        this.fanIn = 0;
+        dsc = 0;
+        complexity = 0.0;
+        dit = 0;
+        rfc = 0.0;
+        lcom = 0.0;
+        wmc = 0.0;
+        nom = 0.0;
+        mpc = 0.0;
+        dac = 0;
+        cbo = 0.0;
+        size1 = 0;
+        size2 = 0;
+        noh = 0;
+        ana = 0;
+        dam = 0.0;
+        dcc = 0.0;
+        camc = 0.0;
+        moa = 0;
+        mfa = 0.0;
+        nop = 0;
+        cis = 0;
+        npm = 0;
+        fanIn = 0;
     }
 
     @Override
@@ -137,20 +181,21 @@ public class QualityMetrics {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         QualityMetrics that = (QualityMetrics) o;
-        return Objects.equals(DSC, that.DSC) && Objects.equals(DIT, that.DIT) && Objects.equals(NOCC, that.NOCC) && Objects.equals(RFC, that.RFC) && Objects.equals(LCOM, that.LCOM) && Objects.equals(WMC, that.WMC) && Objects.equals(NOM, that.NOM) && Objects.equals(MPC, that.MPC) && Objects.equals(DAC, that.DAC) && Objects.equals(CBO, that.CBO) && Objects.equals(SIZE1, that.SIZE1) && Objects.equals(SIZE2, that.SIZE2) && Objects.equals(NOH, that.NOH) && Objects.equals(ANA, that.ANA) && Objects.equals(DAM, that.DAM) && Objects.equals(DCC, that.DCC) && Objects.equals(CAMC, that.CAMC) && Objects.equals(MOA, that.MOA) && Objects.equals(MFA, that.MFA) && Objects.equals(NOP, that.NOP) && Objects.equals(CIS, that.CIS) && Objects.equals(NPM, that.NPM) && Objects.equals(fanIn, that.fanIn);
+        return Objects.equals(dsc, that.dsc) && Objects.equals(dit, that.dit) && Objects.equals(nocc, that.nocc) && Objects.equals(rfc, that.rfc) && Objects.equals(lcom, that.lcom) && Objects.equals(wmc, that.wmc) && Objects.equals(nom, that.nom) && Objects.equals(mpc, that.mpc) && Objects.equals(dac, that.dac) && Objects.equals(cbo, that.cbo) && Objects.equals(size1, that.size1) && Objects.equals(size2, that.size2) && Objects.equals(noh, that.noh) && Objects.equals(ana, that.ana) && Objects.equals(dam, that.dam) && Objects.equals(dcc, that.dcc) && Objects.equals(camc, that.camc) && Objects.equals(moa, that.moa) && Objects.equals(mfa, that.mfa) && Objects.equals(nop, that.nop) && Objects.equals(cis, that.cis) && Objects.equals(npm, that.npm) && Objects.equals(fanIn, that.fanIn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(DSC, DIT, NOCC, RFC, LCOM, WMC, NOM, MPC, DAC, CBO, SIZE1, SIZE2, NOH, ANA, DAM, DCC, CAMC, MOA, MFA, NOP, CIS, NPM, fanIn);
+        return Objects.hash(dsc, dit, nocc, rfc, lcom, wmc, nom, mpc, dac, cbo, size1, size2, noh, ana, dam, dcc, camc, moa, mfa, nop, cis, npm, fanIn);
     }
 
     @Override
     public String toString() {
-        return this.getWMC() + "\t" + this.getDIT() + "\t" + this.getNOCC() + "\t" + this.getCBO() + "\t" + this.getRFC() + "\t" + this.getLCOM() + "\t" + this.getComplexity() + "\t" + this.getNOM() + "\t" + this.getMPC() + "\t" + this.getDAC() + "\t" + this.getSIZE1() + "\t" + this.getSIZE2() + "\t" + this.getDSC() + "\t" + this.getNOH() + "\t" + this.getANA() + "\t" + this.getDAM() + "\t" + this.getDCC() + "\t" + this.getCAMC() + "\t" + this.getMOA() + "\t" + this.getMFA() + "\t" + this.getNOP() + "\t" + this.getCIS() + "\t" + this.getNPM() + "\t" + this.getReusability() + "\t" + this.getFlexibility() + "\t" + this.getUnderstandability() + "\t" + this.getFunctionality() + "\t" + this.getExtendibility() + "\t" + this.getEffectiveness() + "\t" + this.getFanIn();
+        return getWmc() + "\t" + getDit() + "\t" + getNocc() + "\t" + getCbo() + "\t" + getRfc() + "\t" + getLcom() + "\t" + getComplexity() + "\t" + getNom() + "\t" + getMpc() + "\t" + getDac() + "\t" + getSize1() + "\t" + getSize2() + "\t" + getDsc() + "\t" + getNoh() + "\t" + getAna() + "\t" + getDam() + "\t" + getDcc() + "\t" + getCamc() + "\t" + getMoa() + "\t" + getMfa() + "\t" + getNop() + "\t" + getCis() + "\t" + getNpm() + "\t" + getReusability() + "\t" + getFlexibility() + "\t" + getUnderstandability() + "\t" + getFunctionality() + "\t" + getExtendibility() + "\t" + getEffectiveness() + "\t" + getFanIn();
     }
 
     public String toString(String delimiter) {
-        return this.getWMC() + delimiter + this.getDIT() + delimiter + this.getNOCC() + delimiter + this.getCBO() + delimiter + this.getRFC() + delimiter + this.getLCOM() + delimiter + this.getComplexity() + delimiter + this.getNOM() + delimiter + this.getMPC() + delimiter + this.getDAC() + delimiter + this.getSIZE1() + delimiter + this.getSIZE2() + delimiter + this.getDSC() + delimiter + this.getNOH() + delimiter + this.getANA() + delimiter + this.getDAM() + delimiter + this.getDCC() + delimiter + this.getCAMC() + delimiter + this.getMOA() + delimiter + this.getMFA() + delimiter + this.getNOP() + delimiter + this.getCIS() + delimiter + this.getNPM() + delimiter + this.getReusability() + delimiter + this.getFlexibility() + delimiter + this.getUnderstandability() + delimiter + this.getFunctionality() + delimiter + this.getExtendibility() + delimiter + this.getEffectiveness() + delimiter + this.getFanIn();
+        return getWmc() + delimiter + getDit() + delimiter + getNocc() + delimiter + getCbo() + delimiter + getRfc() + delimiter + getLcom() + delimiter + getComplexity() + delimiter + getNom() + delimiter + getMpc() + delimiter + getDac() + delimiter + getSize1() + delimiter + getSize2() + delimiter + getDsc() + delimiter + getNoh() + delimiter + getAna() + delimiter + getDam() + delimiter + getDcc() + delimiter + getCamc() + delimiter + getMoa() + delimiter + getMfa() + delimiter + getNop() + delimiter + getCis() + delimiter + getNpm() + delimiter + getReusability() + delimiter + getFlexibility() + delimiter + getUnderstandability() + delimiter + getFunctionality() + delimiter + getExtendibility() + delimiter + getEffectiveness() + delimiter + getFanIn();
     }
 }
+
