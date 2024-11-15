@@ -8,7 +8,6 @@ import com.github.javaparser.ast.nodeTypes.modifiers.NodeWithAbstractModifier;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.SwitchStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
@@ -182,7 +181,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     private int calculateDIT() {
         try {
             return (int) javaClass.resolve().getAllAncestors().stream().filter(ancestor -> withinAnalysisBounds(ancestor.getQualifiedName())).count();
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
         return 0;
     }
@@ -423,7 +422,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                             return null;
                         }
                     })
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Throwable t) {
             return 0.0F;
         }
@@ -449,7 +448,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                     try {
                         if (ancestor.getAllClassesAncestors().isEmpty())
                             break;
-                        ResolvedReferenceType ancestorSuperClass = ancestor.getAllClassesAncestors().get(ancestor.getAllClassesAncestors().size() - 1);
+                        ResolvedReferenceType ancestorSuperClass = ancestor.getAllClassesAncestors().getLast();
                         if (withinAnalysisBounds(ancestorSuperClass.getQualifiedName())) {
                             ancestors.add(ancestorSuperClass);
                         }
@@ -507,7 +506,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         try {
             if (withinAnalysisBounds(javaClass.resolve().getQualifiedName())) {
                 ancestors.add(javaClass.resolve().getAncestors()
-                        .get(javaClass.resolve().getAncestors().size() - 1));
+                        .getLast());
                 ancestors.addAll(getValidInterfaces(javaClass.resolve().getAllAncestors()));
             }
         } catch (Throwable ignored) {
@@ -523,7 +522,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                     }
                     if (withinAnalysisBounds(ancestor.getQualifiedName())) {
                         try {
-                            ancestors.add(ancestor.getAllClassesAncestors().get(ancestor.getAllClassesAncestors().size() - 1));
+                            ancestors.add(ancestor.getAllClassesAncestors().getLast());
                         } catch (Throwable ignored) {
                         }
                     }
@@ -575,7 +574,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                     }
                 }
             }
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
         return validInterfaces;
     }
@@ -587,7 +586,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
      */
     private void registerFieldAccess(String fieldName) {
         registerCoupling(javaClass.resolve().getQualifiedName());
-        methodIntersection.get(methodIntersection.size() - 1).add(fieldName);
+        methodIntersection.getLast().add(fieldName);
     }
 
     /**
@@ -765,6 +764,4 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                 .flatMap(javaFile -> javaFile.getClasses().stream())
                 .anyMatch(javaClass -> javaClass.equals(targetClass));
     }
-
-
 }
