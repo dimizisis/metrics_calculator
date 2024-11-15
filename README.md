@@ -13,27 +13,29 @@ This is a maven project. To compile the project execute the following command:
 
 ### 1. Instructions for use via Command Line
 
-Open a cmd window in the directory where MetricsCalculator.jar is located and run the following command:
+Open a cmd window in the directory where ```MetricsCalculator.jar``` is located and run the following command:
 
 ```
 java -jar MetricsCalculator.jar <project_root_absolute_path> <outfilename>.csv
 ```
 
-where project_root_absolute_path and outfilename are the full path to the root folder of the project you want to parse (ie before the src folders) and the name of the CSV file in which the metric results will be stored, respectively (see also the screenshot below).
+where ```project_root_absolute_path``` and ```outfilename``` are the full path to the root folder of the project you want to parse (ie before the src folders) and the name of the CSV file in which the metric results will be stored, respectively (see also the screenshot below).
+
+Alternatively, instead of specifying ```<outfilename>.csv```, you can use the keyword str to print the metrics directly to the console.
 
 ![alt_text](https://i.imgur.com/D4dIlmf.png)
 
-If you want the results file to be saved in a specific folder, then you also enter the complete path to that folder and then <outfilename> .csv (eg C:/Users/results.csv)
+If you want the results file to be saved in a specific folder, then you also enter the complete path to that folder and then ```<outfilename> .csv``` (eg ```C:/Users/results.csv```)
 
 Once the process is complete, the results file should be created.
 
 ### 2. Instructions for use via GUI
 
-Double-clicking on MetricsCalculator.jar should bring up the following window:
+Double-clicking on ```MetricsCalculator.jar``` should bring up the following window:
 
 ![alt_text](https://i.imgur.com/OOVfE6T.png)
 
-where in the upper textbox should be placed (either with copy-paste, or with the Select button) the full path to the root folder of the project you want to analyze (before the src folders that is), while in the lower textbox the full path of the CSV file in which the metric results will be stored (the CSV name is auto-generated of the type: analysis_xxx.csv).
+where in the upper textbox should be placed (either with copy-paste, or with the Select button) the full path to the root folder of the project you want to analyze (before the ```src``` folders that is), while in the lower textbox the full path of the ```CSV``` file in which the metric results will be stored (the ```CSV``` filename is auto-generated: ```analysis_xxx.csv```).
 
 Once the process is complete, the program will output a completion message (see screenshot below) and the results file should be created in the selected folder.
 
@@ -42,7 +44,7 @@ Once the process is complete, the program will output a completion message (see 
 #### Note 1: The UI function has not been completely tested yet, errors may occur.
 
 ## Calculated metrics
-The generated comma separated values (.csv) file contains 27 (+1 extra) metrics from four different metrics suites. The order of the extracted metrics along with the metrics suite that they belong to is presented in the following table.  
+The generated comma separated values (```.csv```) file contains 27 (+1 extra) metrics from four different metrics suites. The order of the extracted metrics along with the metrics suite that they belong to is presented in the following table.  
 
 | Field | Metric Suite        | Metric | Description                                                  |
 |-------|---------------------|--------|--------------------------------------------------------------|
