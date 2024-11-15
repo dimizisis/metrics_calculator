@@ -20,14 +20,16 @@ jobs:
         echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
 
     - name: Increment Version
-      id: increment_version
       run: |
-        # Get the latest tag
         IFS='.' read -r major minor patch <<< "${LATEST_TAG/v/}"
         patch=$((patch+1))
         new_tag="v${major}.${minor}.${patch}"
+        if git rev-parse "refs/tags/$new_tag" >/dev/null 2>&1; then
+          echo "Tag $new_tag already exists. Incrementing further."
+          patch=$((patch+1))
+          new_tag="v${major}.${minor}.${patch}"
+        fi
         echo "NEW_TAG=$new_tag" >> $GITHUB_ENV
-        echo "New version: $new_tag"
 
     - name: Create Tag
       id: create_tag
