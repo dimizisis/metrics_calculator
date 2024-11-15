@@ -53,7 +53,7 @@ public class MetricsCalculator {
             return -1;
         }
         if (createFileSet(sourceRoots) == 0) {
-            System.err.println("No classes could be identified! Exiting...");
+            logger.error("No classes could be identified! Exiting...");
             return -1;
         }
         startCalculations(sourceRoots);
