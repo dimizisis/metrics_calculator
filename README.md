@@ -2,6 +2,33 @@
 
 This is a project that calculates code metrics on Java Source Code (```.java``` files).
 
+## Citing MetricsCalculator
+If you use ```MetricsCalculator``` in your research or project, please consider citing it. Proper citation helps acknowledge the authors' contributions and allows others to locate the tool easily. You can cite MetricsCalculator as follows:
+
+### Example Citation in LaTeX
+
+```bibtex
+@software{MetricsCalculator,
+  author = {Dimitrios Zisis},
+  title = {MetricsCalculator: A Tool for Calculating Software Metrics for Java Source Code},
+  year = {2024},
+  url = {https://github.com/dimizisis/metrics_calculator},
+  version = {v0.0.1},
+  license = {MIT},
+  note = {Available at: https://github.com/dimizisis/metrics_calculator}
+}
+```
+
+### Plain Text Citation
+Alternatively, you can use this plain text citation format:
+
+```
+Zisis, Dimitrios.
+MetricsCalculator: A Tool for Calculating Software Metrics for Java Source Code (v0.0.1).
+Available at: https://github.com/dimizisis/metrics_calculator. 2024.
+Licensed under MIT.
+```
+
 ## Requirements
 - [Apache Maven](https://maven.apache.org/) project management and comprehension tool.  
 
