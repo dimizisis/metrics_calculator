@@ -1,9 +1,9 @@
-name: Create Tag and Release on Push
+name: Increment Version and Create Release
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   create-release:
@@ -29,21 +29,6 @@ jobs:
         patch=$((patch + 1))
         new_version="v${major}.${minor}.${patch}"
         echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
-
-    - name: Check if Tag Exists
-      id: check_tag_exists
-      run: |
-        git fetch --tags
-        if git rev-parse -q --verify "refs/tags/${{ env.NEW_VERSION }}" >/dev/null; then
-          echo "TAG_EXISTS=true" >> $GITHUB_ENV
-        else
-          echo "TAG_EXISTS=false" >> $GITHUB_ENV
-
-    - name: Delete Existing Tag (if exists)
-      if: ${{ env.TAG_EXISTS == 'true' }}
-      run: |
-        git push --delete origin ${{ env.NEW_VERSION }}
-        git tag -d ${{ env.NEW_VERSION }}
 
     - name: Create and Push Tag
       run: |
