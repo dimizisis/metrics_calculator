@@ -202,5 +202,4 @@ public class MetricsCalculator {
     public void setOverallProgress(AtomicInteger fileAnalysisProgressPercentage) {
         this.fileAnalysisProgressPercentage = fileAnalysisProgressPercentage;
     }
-
 }
