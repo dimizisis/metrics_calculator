@@ -2,7 +2,7 @@ name: Update Version in pom.xml
 
 on:
   release:
-    types: [published]
+    types: [created, published]
 
 jobs:
   update-version:
