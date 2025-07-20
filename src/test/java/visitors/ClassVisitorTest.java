@@ -25,7 +25,7 @@ class ClassVisitorTest {
     private static void configureParser() {
         CombinedTypeSolver solver = new CombinedTypeSolver();
         solver.add(new ReflectionTypeSolver());
-        solver.add(new JavaParserTypeSolver(new File("src/test/resources/testProject")));
+        solver.add(new JavaParserTypeSolver(new File("src/main/java")));
 
         JavaSymbolSolver symbolSolver = new JavaSymbolSolver(solver);
         ParserConfiguration parserConfiguration = new ParserConfiguration()
