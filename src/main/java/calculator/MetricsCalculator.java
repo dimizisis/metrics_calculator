@@ -88,7 +88,8 @@ public class MetricsCalculator {
         ParserConfiguration parserConfiguration = new ParserConfiguration();
         parserConfiguration
                 .setSymbolResolver(symbolSolver)
-                .setAttributeComments(false).setDetectOriginalLineSeparator(true);
+                .setAttributeComments(false)
+                .setDetectOriginalLineSeparator(true);
         StaticJavaParser
                 .setConfiguration(parserConfiguration);
     }

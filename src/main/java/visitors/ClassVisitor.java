@@ -146,10 +146,10 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     private double calculateMPC() {
         for (MethodCallExpr methodCallExpr : javaClass.findAll(MethodCallExpr.class)) {
             try {
-                String methodCallExprQualifiedName = methodCallExpr.resolve().getQualifiedName();
-                String methodCallExprClass = methodCallExprQualifiedName.substring(0, methodCallExprQualifiedName.lastIndexOf("."));
+                String methodCallExprQualifiedSignature = methodCallExpr.resolve().getQualifiedSignature();
+                String methodCallExprClass = methodCallExprQualifiedSignature.substring(0, methodCallExprQualifiedSignature.lastIndexOf("."));
                 if (withinAnalysisBounds(methodCallExprClass))
-                    methodsCalled.add(methodCallExpr.resolve().getQualifiedName());
+                    methodsCalled.add(methodCallExprQualifiedSignature);
             } catch (Throwable ignored) {
             }
         }
