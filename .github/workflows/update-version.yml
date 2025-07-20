@@ -3,6 +3,7 @@ name: Update Version in pom.xml
 on:
   release:
     types: [created, published]
+  workflow_dispatch:
 
 jobs:
   update-version:
