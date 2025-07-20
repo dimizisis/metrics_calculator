@@ -3,7 +3,7 @@ name: Increment Version and Create Release
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   create-release:

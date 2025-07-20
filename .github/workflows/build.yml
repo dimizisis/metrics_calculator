@@ -5,6 +5,8 @@ on:
       - master
       - feature/*
       - bugfix/*
+      - improvement/*
+      - chore/*
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
