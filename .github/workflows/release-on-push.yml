@@ -42,13 +42,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Create GitHub Release
-      uses: actions/create-release@v1
-      with:
-        tag_name: ${{ env.NEW_VERSION }}
-        release_name: Release ${{ env.NEW_VERSION }}
-        body: "Automated release for ${{ env.NEW_VERSION }}."
-        draft: false
-        prerelease: false
+    - name: Create GitHub Release with CLI
+      run: |
+        gh release create "$NEW_VERSION" \
+          --title "Release $NEW_VERSION" \
+          --notes "Automated release for $NEW_VERSION." \
+          --verify-tag
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NEW_VERSION: ${{ env.NEW_VERSION }}
