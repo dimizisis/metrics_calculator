@@ -1,6 +1,5 @@
 package main;
 
-import calculator.MetricsCalculator;
 import gui.GUI;
 import infrastructure.entities.Project;
 import org.apache.commons.cli.*;
@@ -23,7 +22,7 @@ public class Main {
         if (cmd.getArgs().length != 0) {
             Project project = new Project(args[0]);
             String outputFilename = cmd.getArgs()[1];
-            MetricsCalculator mc = new MetricsCalculator(project);
+            ProjectMetricsAnalyzer mc = new ProjectMetricsAnalyzer(project);
             mc.start();
             if (outputFilename.equals("str"))
                 ResultPrinter.printString(mc);

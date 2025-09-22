@@ -1,6 +1,6 @@
 package output;
 
-import calculator.MetricsCalculator;
+import main.ProjectMetricsAnalyzer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +22,7 @@ public class ResultPrinter {
             "fanIn", "ClassNames" };
 
 
-    public static boolean printCSV(MetricsCalculator mc, String fullOutFilePath) {
+    public static boolean printCSV(ProjectMetricsAnalyzer mc, String fullOutFilePath) {
         StringBuilder output = new StringBuilder();
         appendHeaders(output, "\t");
         output.replace(output.lastIndexOf("\t"), output.lastIndexOf("\t")+1, "\n");
@@ -31,7 +31,7 @@ public class ResultPrinter {
         return writeFile(fullOutFilePath, output);
     }
 
-    public static boolean printCSV(MetricsCalculator mc, String fullOutFilePath, String delimiter) {
+    public static boolean printCSV(ProjectMetricsAnalyzer mc, String fullOutFilePath, String delimiter) {
         StringBuilder output = new StringBuilder();
         appendHeaders(output, delimiter);
         output.replace(output.lastIndexOf(delimiter), output.lastIndexOf(delimiter)+1, "\n");
@@ -40,7 +40,7 @@ public class ResultPrinter {
         return writeFile(fullOutFilePath, output);
     }
 
-    public static boolean printString(MetricsCalculator mc) {
+    public static boolean printString(ProjectMetricsAnalyzer mc) {
         StringBuilder output = new StringBuilder();
         appendHeaders(output, "\t");
         output.replace(output.lastIndexOf("\t"), output.lastIndexOf("\t")+1, "\n");
@@ -59,10 +59,9 @@ public class ResultPrinter {
         try {
             Files.write(Paths.get(path), data.toString().getBytes());
         } catch (IOException e) {
-            logger.error("Exception was thrown: {}", e.getMessage());
+            logger.error("Exception was thrown", e);
             return false;
         }
         return true;
     }
-
 }

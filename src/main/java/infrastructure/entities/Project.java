@@ -1,25 +1,14 @@
 package infrastructure.entities;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-@Setter
 @Getter
+@RequiredArgsConstructor
 public class Project {
-    private String clonePath;
-    private Set<JavaFile> javaFiles;
-
-    public Project(String clonePath, Set<JavaFile> javaFiles) {
-        this.clonePath = clonePath;
-        this.javaFiles = javaFiles;
-    }
-
-    public Project(String clonePath) {
-        this.clonePath = clonePath;
-        this.javaFiles = ConcurrentHashMap.newKeySet();
-    }
-
+    private final String clonePath;
+    private final Set<JavaFile> javaFiles = new HashSet<>();
 }

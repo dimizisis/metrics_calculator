@@ -1,77 +1,39 @@
 package infrastructure.metrics;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Objects;
-
-@Setter
-@Getter
+@Data
 public class QualityMetrics {
-
-    private Integer dsc;
-    private Double complexity;
-    private Integer dit;
-    private Integer nocc;
-    private Double rfc;
-    private Double lcom;
-    private Double wmc;
-    private Double nom;
-    private Double mpc;
-    private Integer dac;
-    private Double cbo;
-    private Integer size1;
-    private Integer size2;
-    private Integer noh;
-    private Integer ana;
-    private Double dam;
-    private Double dcc;
-    private Double camc;
-    private Integer moa;
-    private Double mfa;
-    private Integer nop;
-    private Integer cis;
-    private Integer npm;
-    private Integer fanIn;
-    protected double reusability;
-    protected double flexibility;
-    protected double understandability;
-    protected double functionality;
-    protected double extendibility;
-    protected double effectiveness;
-
-    public QualityMetrics() {
-        dsc = 0;
-        complexity = 0.0;
-        dit = 0;
-        nocc = 0;
-        rfc = 0.0;
-        lcom = 0.0;
-        wmc = 0.0;
-        nom = 0.0;
-        mpc = 0.0;
-        dac = 0;
-        cbo = 0.0;
-        size1 = 0;
-        size2 = 0;
-        noh = 0;
-        ana = 0;
-        dam = 0.0;
-        dcc = 0.0;
-        camc = 0.0;
-        moa = 0;
-        mfa = 0.0;
-        nop = 0;
-        cis = 0;
-        npm = 0;
-        fanIn = 0;
-        reusability = 0.0;
-        flexibility = 0.0;
-        understandability = 0.0;
-        functionality = 0.0;
-        extendibility = 0.0;
-        effectiveness = 0.0;
-    }
+    private int dsc;
+    private double complexity;
+    private int dit;
+    private int nocc;
+    private double rfc;
+    private double lcom;
+    private double wmc;
+    private double nom;
+    private double mpc;
+    private int dac;
+    private double cbo;
+    private int size1;
+    private int size2;
+    private int noh;
+    private int ana;
+    private double dam;
+    private double dcc;
+    private double camc;
+    private int moa;
+    private double mfa;
+    private int nop;
+    private int cis;
+    private int npm;
+    private int fanIn;
+    private double reusability;
+    private double flexibility;
+    private double understandability;
+    private double functionality;
+    private double extendibility;
+    private double effectiveness;
 
     public void add(QualityMetrics o) {
         complexity = performAdditionWithSanityCheck(complexity, o.getComplexity());
@@ -148,45 +110,6 @@ public class QualityMetrics {
         metricValue += metricValueToBeAdded;
 
         return metricValue;
-    }
-
-    public void zero() {
-        dsc = 0;
-        complexity = 0.0;
-        dit = 0;
-        rfc = 0.0;
-        lcom = 0.0;
-        wmc = 0.0;
-        nom = 0.0;
-        mpc = 0.0;
-        dac = 0;
-        cbo = 0.0;
-        size1 = 0;
-        size2 = 0;
-        noh = 0;
-        ana = 0;
-        dam = 0.0;
-        dcc = 0.0;
-        camc = 0.0;
-        moa = 0;
-        mfa = 0.0;
-        nop = 0;
-        cis = 0;
-        npm = 0;
-        fanIn = 0;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        QualityMetrics that = (QualityMetrics) o;
-        return Objects.equals(dsc, that.dsc) && Objects.equals(dit, that.dit) && Objects.equals(nocc, that.nocc) && Objects.equals(rfc, that.rfc) && Objects.equals(lcom, that.lcom) && Objects.equals(wmc, that.wmc) && Objects.equals(nom, that.nom) && Objects.equals(mpc, that.mpc) && Objects.equals(dac, that.dac) && Objects.equals(cbo, that.cbo) && Objects.equals(size1, that.size1) && Objects.equals(size2, that.size2) && Objects.equals(noh, that.noh) && Objects.equals(ana, that.ana) && Objects.equals(dam, that.dam) && Objects.equals(dcc, that.dcc) && Objects.equals(camc, that.camc) && Objects.equals(moa, that.moa) && Objects.equals(mfa, that.mfa) && Objects.equals(nop, that.nop) && Objects.equals(cis, that.cis) && Objects.equals(npm, that.npm) && Objects.equals(fanIn, that.fanIn);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(dsc, dit, nocc, rfc, lcom, wmc, nom, mpc, dac, cbo, size1, size2, noh, ana, dam, dcc, camc, moa, mfa, nop, cis, npm, fanIn);
     }
 
     @Override

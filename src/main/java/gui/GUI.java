@@ -1,6 +1,6 @@
 package gui;
 
-import calculator.MetricsCalculator;
+import main.ProjectMetricsAnalyzer;
 import infrastructure.entities.Project;
 import output.ResultPrinter;
 
@@ -13,15 +13,12 @@ import java.io.File;
 import java.util.Objects;
 
 public class GUI extends JFrame{
-
-
     private JButton selectInDirBtn;
     private JButton selectOutDirBtn;
     private JButton calculateBtn;
     private JTextField inputDirTextField;
     private JTextField outputDirTextField;
     private JPanel loadingSpinnerPanel;
-
     private JLabel percentageLabel;
 
     /**
@@ -47,9 +44,9 @@ public class GUI extends JFrame{
         );
         contentPane.setLayout(glContentPane);
 
-        JPanel panel = new JPanel();
-        JPanel panelUp = new JPanel();
-        JPanel panelDown = new JPanel();
+        var panel = new JPanel();
+        var panelUp = new JPanel();
+        var panelDown = new JPanel();
         loadingSpinnerPanel = new JPanel();
         panelUp.setLayout(new GridLayout(2,2,10,10));
         selectInDirBtn = new JButton("...");
@@ -114,9 +111,8 @@ public class GUI extends JFrame{
     }
 
     private class PercentageUpdateThread extends Thread {
-
-        private final MetricsCalculator mc;
-        public PercentageUpdateThread(MetricsCalculator mc) {
+        private final ProjectMetricsAnalyzer mc;
+        public PercentageUpdateThread(ProjectMetricsAnalyzer mc) {
             this.mc = mc;
         }
         @Override
@@ -148,7 +144,7 @@ public class GUI extends JFrame{
                 loadingSpinnerPanel.setVisible(true);
                 setSize(new Dimension(370, 185));
                 Project project = new Project(inputDirTextField.getText());
-                MetricsCalculator mc = new MetricsCalculator(project);
+                ProjectMetricsAnalyzer mc = new ProjectMetricsAnalyzer(project);
                 new PercentageUpdateThread(mc).start();
                 if (mc.start() == -1) {
                     JOptionPane.showMessageDialog(null, "No classes could be identified!", "Parsing Error", JOptionPane.ERROR_MESSAGE);
@@ -162,5 +158,4 @@ public class GUI extends JFrame{
             }
         }
     }
-
 }
