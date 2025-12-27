@@ -15,10 +15,10 @@ class CboCalculatorTest {
                 .isProjectClass(true)
                 .build();
         var metrics = new QualityMetrics();
-        var calculator = new CboCalculator();
+        var cboCalculator = new CboCalculator();
 
         // Act
-        calculator.compute(classData, metrics);
+        cboCalculator.compute(classData, metrics);
 
         // Assert
         assertEquals(0.0, metrics.getCbo());
@@ -37,10 +37,10 @@ class CboCalculatorTest {
                 .addDependency("com.example.ClassE")
                 .build();
         var metrics = new QualityMetrics();
-        var calculator = new CboCalculator();
+        var cboCalculator = new CboCalculator();
 
         // Act
-        calculator.compute(classData, metrics);
+        cboCalculator.compute(classData, metrics);
 
         // Assert
         assertEquals(5.0, metrics.getCbo());
@@ -56,10 +56,10 @@ class CboCalculatorTest {
                 .addDependency("com.example.Dependency2")
                 .build();
         var metrics = new QualityMetrics();
-        var calculator = new CboCalculator();
+        var cboCalculator = new CboCalculator();
 
         // Act
-        calculator.compute(classData, metrics);
+        cboCalculator.compute(classData, metrics);
 
         // Assert
         assertEquals(metrics.getCbo(), metrics.getDcc());

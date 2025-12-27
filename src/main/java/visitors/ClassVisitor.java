@@ -157,6 +157,16 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         int innerClassCount = computeInnerClassCount(node);
         builder.innerClassCount(innerClassCount);
 
+        // Pre-compute field metrics for DAM and MOA
+        int publicFieldCount = computePublicFieldCount(node);
+        builder.publicFieldCount(publicFieldCount);
+
+        int privateProtectedFieldCount = computePrivateProtectedFieldCount(node);
+        builder.privateProtectedFieldCount(privateProtectedFieldCount);
+
+        int projectTypeFieldCount = computeProjectTypeFieldCount(node, qualifiedName);
+        builder.projectTypeFieldCount(projectTypeFieldCount);
+
         // Build the ClassData
         ClassData classData = builder.build();
         javaClass.setClassData(classData);
@@ -246,6 +256,43 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
         for (BodyDeclaration<?> member : node.getMembers()) {
             if (member.isClassOrInterfaceDeclaration()) {
                 count++;
+            }
+        }
+        return count;
+    }
+
+    private int computePublicFieldCount(TypeDeclaration<?> node) {
+        int count = 0;
+        for (FieldDeclaration field : node.getFields()) {
+            if (field.isPublic()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private int computePrivateProtectedFieldCount(TypeDeclaration<?> node) {
+        int count = 0;
+        for (FieldDeclaration field : node.getFields()) {
+            if (field.isPrivate() || field.isProtected()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private int computeProjectTypeFieldCount(TypeDeclaration<?> node, String selfQualifiedName) {
+        int count = 0;
+        for (FieldDeclaration field : node.getFields()) {
+            if (field.getElementType().isPrimitiveType()) {
+                continue;
+            }
+            try {
+                String typeName = field.getElementType().resolve().asReferenceType().getQualifiedName();
+                if (!typeName.equals(selfQualifiedName) && bounds.contains(typeName)) {
+                    count++;
+                }
+            } catch (Throwable ignored) {
             }
         }
         return count;

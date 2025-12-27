@@ -28,6 +28,9 @@ public class ClassData {
     private final int fieldCount;
     private final int innerClassCount;
     private final int totalMemberLines;
+    private final int publicFieldCount;
+    private final int privateProtectedFieldCount;
+    private final int projectTypeFieldCount;
 
     private ClassData(Builder builder) {
         this.qualifiedName = Objects.requireNonNull(builder.qualifiedName, "qualifiedName cannot be null");
@@ -46,6 +49,9 @@ public class ClassData {
         this.fieldCount = builder.fieldCount;
         this.innerClassCount = builder.innerClassCount;
         this.totalMemberLines = builder.totalMemberLines;
+        this.publicFieldCount = builder.publicFieldCount;
+        this.privateProtectedFieldCount = builder.privateProtectedFieldCount;
+        this.projectTypeFieldCount = builder.projectTypeFieldCount;
     }
 
     public static Builder builder(String qualifiedName) {
@@ -67,6 +73,9 @@ public class ClassData {
         private int fieldCount = 0;
         private int innerClassCount = 0;
         private int totalMemberLines = 0;
+        private int publicFieldCount = 0;
+        private int privateProtectedFieldCount = 0;
+        private int projectTypeFieldCount = 0;
 
         private Builder(String qualifiedName) {
             this.qualifiedName = qualifiedName;
@@ -144,6 +153,21 @@ public class ClassData {
 
         public Builder totalMemberLines(int lines) {
             this.totalMemberLines = lines;
+            return this;
+        }
+
+        public Builder publicFieldCount(int count) {
+            this.publicFieldCount = count;
+            return this;
+        }
+
+        public Builder privateProtectedFieldCount(int count) {
+            this.privateProtectedFieldCount = count;
+            return this;
+        }
+
+        public Builder projectTypeFieldCount(int count) {
+            this.projectTypeFieldCount = count;
             return this;
         }
 

@@ -2,6 +2,7 @@ package main;
 
 import analysis.ProjectAnalysisBounds;
 import calculator.single.ClassMetricCalculator;
+import calculator.single.impl.cohesion.CamcCalculator;
 import calculator.single.impl.cohesion.LcomCalculator;
 import calculator.single.impl.complexity.CyclomaticComplexityCalculator;
 import calculator.single.impl.complexity.DitCalculator;
@@ -9,11 +10,18 @@ import calculator.single.impl.complexity.MpcCalculator;
 import calculator.single.impl.complexity.WmcCalculator;
 import calculator.single.impl.coupling.CboCalculator;
 import calculator.single.impl.coupling.DacCalculator;
-import calculator.single.impl.coupling.DccCalculator;
+import calculator.single.impl.coupling.RfcCalculator;
+import calculator.single.impl.design.MoaCalculator;
+import calculator.single.impl.encapsulation.CisCalculator;
+import calculator.single.impl.encapsulation.DamCalculator;
+import calculator.single.impl.inheritance.NopCalculator;
 import calculator.single.impl.size.DscCalculator;
 import calculator.single.impl.size.Size1Calculator;
 import calculator.single.impl.size.Size2Calculator;
 import calculator.aggregate.impl.coupling.NoccCalculator;
+import calculator.aggregate.impl.inheritance.MfaCalculator;
+import calculator.aggregate.impl.inheritance.NohCalculator;
+import calculator.aggregate.impl.responsibility.AnaCalculator;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
@@ -92,8 +100,12 @@ public class ProjectMetricsAnalyzer {
                 .toList();
         MetricsRepository repository = new InMemoryMetricsRepository(allClasses);
 
-        // Run aggregate metric calculators
+        // Run aggregate metric calculators in order
+        // NOH depends on NOCC and ANA, so it must run last
         new NoccCalculator().compute(repository);
+        new AnaCalculator().compute(repository);
+        new MfaCalculator().compute(repository);
+        new NohCalculator().compute(repository); // Must be last
     }
 
     private ProjectRoot getProjectRoot(String projectDir) {
@@ -184,17 +196,29 @@ public class ProjectMetricsAnalyzer {
 
     private List<ClassMetricCalculator> buildCalculators() {
         return List.of(
+                // Cohesion
                 new LcomCalculator(),
+                new CamcCalculator(),
+                // Complexity
                 new CyclomaticComplexityCalculator(),
-                new Size1Calculator(),
-                new Size2Calculator(),
-                new CboCalculator(),
-                new DccCalculator(),
-                new DscCalculator(),
                 new WmcCalculator(),
                 new DitCalculator(),
                 new MpcCalculator(),
-                new DacCalculator()
+                // Coupling
+                new CboCalculator(),
+                new DacCalculator(),
+                new RfcCalculator(),
+                // Size
+                new Size1Calculator(),
+                new Size2Calculator(),
+                new DscCalculator(),
+                // Encapsulation
+                new CisCalculator(),
+                new DamCalculator(),
+                // Inheritance
+                new NopCalculator(),
+                // Design
+                new MoaCalculator()
         );
     }
 
