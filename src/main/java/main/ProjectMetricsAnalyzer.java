@@ -174,6 +174,7 @@ public class ProjectMetricsAnalyzer {
                 new Size2Calculator(),
                 new CboCalculator(),
                 new DscCalculator(),
+                new WmcCalculator(),
                 new DitCalculator()
         );
     }
