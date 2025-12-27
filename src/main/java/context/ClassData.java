@@ -32,16 +32,14 @@ public class ClassData {
     private ClassData(Builder builder) {
         this.qualifiedName = Objects.requireNonNull(builder.qualifiedName, "qualifiedName cannot be null");
         this.isProjectClass = builder.isProjectClass;
-        this.methods = Collections.unmodifiableList(new ArrayList<>(builder.methods));
-        this.fieldNames = Collections.unmodifiableSet(new HashSet<>(builder.fieldNames));
-        this.methodFieldSets = Collections.unmodifiableList(
-            builder.methodFieldSets.stream()
-                .map(set -> new TreeSet<>(set))
-                .toList()
-        );
-        this.methodsCalled = Collections.unmodifiableSet(new HashSet<>(builder.methodsCalled));
-        this.dependencies = Collections.unmodifiableSet(new HashSet<>(builder.dependencies));
-        this.directParents = Collections.unmodifiableSet(new HashSet<>(builder.directParents));
+        this.methods = List.copyOf(builder.methods);
+        this.fieldNames = Set.copyOf(builder.fieldNames);
+        this.methodFieldSets = builder.methodFieldSets.stream()
+                .map(TreeSet::new)
+                .toList();
+        this.methodsCalled = Set.copyOf(builder.methodsCalled);
+        this.dependencies = Set.copyOf(builder.dependencies);
+        this.directParents = Set.copyOf(builder.directParents);
         this.depthOfInheritance = builder.depthOfInheritance;
         this.messagePassingCoupling = builder.messagePassingCoupling;
         this.dataAbstractionCoupling = builder.dataAbstractionCoupling;

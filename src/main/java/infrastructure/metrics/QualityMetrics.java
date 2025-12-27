@@ -126,49 +126,8 @@ public class QualityMetrics {
         return toString("\t");
     }
 
-    /**
-     * Returns a delimited string of all metric values.
-     * Uses reflection to automatically include all fields in declaration order.
-     *
-     * @param delimiter the delimiter to use between values
-     * @return delimited string of all metric values
-     */
     public String toString(String delimiter) {
-        return String.join(delimiter, getMetricValuesAsStrings());
-    }
-
-    /**
-     * Returns the names of all metric fields in declaration order.
-     * Static method so it can be called without an instance.
-     *
-     * @return array of metric field names
-     */
-    public static String[] getMetricNames() {
-        return java.util.Arrays.stream(QualityMetrics.class.getDeclaredFields())
-                .filter(f -> !java.lang.reflect.Modifier.isStatic(f.getModifiers()))
-                .map(java.lang.reflect.Field::getName)
-                .map(name -> name.toUpperCase().replace("_", " "))
-                .toArray(String[]::new);
-    }
-
-    /**
-     * Returns the values of all metric fields as strings in declaration order.
-     *
-     * @return list of metric values as strings
-     */
-    private java.util.List<String> getMetricValuesAsStrings() {
-        return java.util.Arrays.stream(QualityMetrics.class.getDeclaredFields())
-                .filter(f -> !java.lang.reflect.Modifier.isStatic(f.getModifiers()))
-                .map(field -> {
-                    try {
-                        field.setAccessible(true);
-                        Object value = field.get(this);
-                        return value != null ? value.toString() : "0";
-                    } catch (IllegalAccessException e) {
-                        return "0";
-                    }
-                })
-                .toList();
+        return getWmc() + delimiter + getDit() + delimiter + getNocc() + delimiter + getCbo() + delimiter + getRfc() + delimiter + getLcom() + delimiter + getComplexity() + delimiter + getNom() + delimiter + getMpc() + delimiter + getDac() + delimiter + getSize1() + delimiter + getSize2() + delimiter + getDsc() + delimiter + getNoh() + delimiter + getAna() + delimiter + getDam() + delimiter + getDcc() + delimiter + getCamc() + delimiter + getMoa() + delimiter + getMfa() + delimiter + getNop() + delimiter + getCis() + delimiter + getNpm() + delimiter + getReusability() + delimiter + getFlexibility() + delimiter + getUnderstandability() + delimiter + getFunctionality() + delimiter + getExtendibility() + delimiter + getEffectiveness() + delimiter + getFanIn();
     }
 }
 
