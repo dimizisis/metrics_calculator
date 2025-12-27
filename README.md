@@ -109,3 +109,182 @@ The generated comma separated values (```.csv```) file contains 27 (+1 extra) me
 | 28    | QMOOD               | -      | Extendability  (0.5\*ANA - 0.5\*DCC + 0.5\*MFA + 0.5\*NOP)      |
 | 29    | QMOOD               | -      | Effectiveness (0.2\*ANA + 0.2\*DAM + 0.2\*MOA + 0.2\*MFA + 0.2\*NOP)                                               |
 | 30    | Other               | FanIn  | Afferent coupling (referred as Ca  in the C&K metrics suite) |
+
+
+## How to Add a New Metric
+
+### Step 1: Determine Calculator Type
+
+Ask: **Does this metric need information from multiple classes?**
+- **Yes** → Aggregate Calculator
+- **No** → Single Calculator
+
+### Step 2: Choose the Category
+
+Place the calculator in the appropriate package:
+- `cohesion/` - Metrics about how methods relate within a class
+- `complexity/` - Metrics about code complexity
+- `coupling/` - Metrics about dependencies between classes
+- `size/` - Metrics about class/method size
+- `inheritance/` - Metrics about inheritance relationships
+- `encapsulation/` - Metrics about data hiding
+- `design/` - Metrics about composition and architecture
+- `responsibility/` - Metrics about class responsibilities
+
+### Step 3: Implement the Calculator
+
+#### For Single Metrics:
+
+```java
+package calculator.single.impl.<category>;
+
+import calculator.single.ClassMetricCalculator;
+import context.ClassData;
+import infrastructure.metrics.QualityMetrics;
+
+/**
+ * Computes the [Metric Name] ([ACRONYM]) metric.
+ *
+ * [Description of what the metric measures]
+ *
+ * Formula: [Mathematical formula if applicable]
+ *
+ * Returns [special values, e.g., -1 for edge cases]
+ */
+public class MyMetricCalculator implements ClassMetricCalculator {
+    @Override
+    public void compute(ClassData classData, QualityMetrics metrics) {
+        // 1. Extract data from classData
+        // 2. Perform calculation
+        // 3. Set result: metrics.setMyMetric(value);
+    }
+}
+```
+
+#### For Aggregate Metrics:
+
+```java
+package calculator.aggregate.impl.<category>;
+
+import calculator.aggregate.AggregateMetricCalculator;
+import repository.MetricsRepository;
+
+/**
+ * Computes the [Metric Name] ([ACRONYM]) metric.
+ *
+ * [Description - mention it's aggregate]
+ *
+ * Note: [Any dependencies on other metrics]
+ */
+public class MyMetricCalculator implements AggregateMetricCalculator {
+    @Override
+    public void compute(MetricsRepository repository) {
+        for (String className : repository.getProjectClassNames()) {
+            ClassData classData = repository.getClassData(className);
+            if (classData == null) continue;
+
+            // 1. Compute metric using repository data
+            // 2. Update metrics: repository.getMetrics(className).setMyMetric(value);
+        }
+    }
+}
+```
+
+### Step 4: Add Tests
+
+Create `MyMetricCalculatorTest.java` with minimum 3 tests:
+
+```java
+package calculator.<single|aggregate>.impl.<category>;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+class MyMetricCalculatorTest {
+
+    @Test
+    void testNoData_ReturnsExpectedValue() {
+        // Test edge case: empty/minimal input
+    }
+
+    @Test
+    void testTypicalCase_ReturnsCorrectValue() {
+        // Test normal scenario
+    }
+
+    @Test
+    void testComplexCase_HandlesCorrectly() {
+        // Test complex scenario
+    }
+}
+```
+
+### Step 5: Register the Calculator
+
+**For Single Metrics**, add to `ProjectMetricsAnalyzer.buildCalculators()`:
+
+```java
+private List<ClassMetricCalculator> buildCalculators() {
+    return List.of(
+        // ... existing calculators ...
+        new MyMetricCalculator()  // Add here
+    );
+}
+```
+
+**For Aggregate Metrics**, add to `ProjectMetricsAnalyzer.aggregateProjectMetrics()`:
+
+```java
+private void aggregateProjectMetrics() {
+    // ... existing code ...
+
+    new NoccCalculator().compute(repository);
+    new AnaCalculator().compute(repository);
+    new MyMetricCalculator().compute(repository);  // Add here
+    new NohCalculator().compute(repository);
+}
+```
+
+⚠️ **Important**: If your metric depends on other metrics, ensure it runs after them!
+
+### Step 6: Add Getter/Setter to QualityMetrics
+
+If needed, add the metric field and methods to `QualityMetrics.java`:
+
+```java
+private double myMetric;
+
+public double getMyMetric() {
+    return myMetric;
+}
+
+public void setMyMetric(double myMetric) {
+    this.myMetric = myMetric;
+}
+```
+
+### Step 7: Update ClassData (if needed)
+
+If your metric needs data not currently in `ClassData`:
+
+1. **Option A** (Recommended): Pre-compute during AST analysis
+   ```java
+   // In ClassData.java
+   private final int myPrecomputedValue;
+
+   // In ClassVisitor.java
+   int value = computeMyValue(node);
+   builder.myPrecomputedValue(value);
+   ```
+
+2. **Option B**: Add AST nodes directly (only if necessary)
+   ```java
+   // In ClassData.java
+   private final List<SomeDeclaration> declarations;
+   ```
+
+### Step 8: Run Tests
+
+```bash
+mvn test
+```
