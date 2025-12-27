@@ -2,10 +2,13 @@ package visitors;
 
 import analysis.AnalysisBounds;
 import calculator.single.ClassMetricCalculator;
+import com.github.javaparser.Position;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import context.ClassContext;
+import context.ClassData;
 import infrastructure.entities.JavaClass;
 import infrastructure.entities.JavaFile;
 import infrastructure.metrics.QualityMetrics;
@@ -16,9 +19,7 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import lombok.AllArgsConstructor;
 import util.ResolutionUtils;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @AllArgsConstructor
 public class ClassVisitor extends VoidVisitorAdapter<Void> {
@@ -48,59 +49,121 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
             return;
         }
 
-        Optional<JavaClass> javaClassOptional = findJavaClass(qnOpt.get());
+        String qualifiedName = qnOpt.get();
+        Optional<JavaClass> javaClassOptional = findJavaClass(qualifiedName);
         if (javaClassOptional.isEmpty()) {
             return;
         }
 
         JavaClass javaClass = javaClassOptional.get();
 
-        var ctx = new ClassContext(node, bounds);
+        // Build ClassData using builder pattern
+        ClassData.Builder builder = ClassData.builder(qualifiedName)
+                .isProjectClass(bounds.contains(qualifiedName));
 
-        javaClass.setClassContext(ctx);
+        // Collect field names
+        Set<String> fieldNames = new HashSet<>();
+        for (FieldDeclaration f : node.getFields()) {
+            f.getVariables().forEach(v -> {
+                String fieldName = v.getNameAsString();
+                builder.addFieldName(fieldName);
+                fieldNames.add(fieldName);
+            });
+        }
+        builder.fieldCount(node.getFields().size());
+
+        // Collect dependencies, method-field access patterns, and method calls
+        Set<String> dependencies = new HashSet<>();
+        Set<String> methodsCalled = new HashSet<>();
+        List<TreeSet<String>> methodFieldSets = new ArrayList<>();
 
         node.getMethods().forEach(m -> {
-            ctx.startMethod(m);
+            builder.addMethod(m);
 
-            ResolutionUtils.resolveTypeName(m.getType()).ifPresent(t -> addEfferentIfInBounds(ctx, t));
+            // Track field access for this method
+            TreeSet<String> methodFieldSet = new TreeSet<>();
 
-            m.getParameters().forEach(p -> ResolutionUtils.resolveTypeName(p.getType()).ifPresent(t -> addEfferentIfInBounds(ctx, t)));
+            // Collect return type as dependency
+            ResolutionUtils.resolveTypeName(m.getType())
+                    .ifPresent(t -> addDependencyIfInBounds(dependencies, t, qualifiedName));
 
+            // Collect parameter types as dependencies
+            m.getParameters().forEach(p ->
+                    ResolutionUtils.resolveTypeName(p.getType())
+                            .ifPresent(t -> addDependencyIfInBounds(dependencies, t, qualifiedName))
+            );
+
+            // Collect exception types as dependencies
             try {
-                m.resolve().getSpecifiedExceptions().forEach(ex -> addEfferentIfInBounds(ctx, ex.describe()));
+                m.resolve().getSpecifiedExceptions()
+                        .forEach(ex -> addDependencyIfInBounds(dependencies, ex.describe(), qualifiedName));
             } catch (Exception ignored) { }
 
+            // Track field accesses within method
             m.findAll(NameExpr.class).forEach(ne -> {
-                if (ctx.getOwnerFieldNames().contains(ne.getNameAsString())) {
-                    ctx.noteFieldAccess(ne.getNameAsString());
+                if (fieldNames.contains(ne.getNameAsString())) {
+                    methodFieldSet.add(ne.getNameAsString());
                 }
             });
 
+            methodFieldSets.add(methodFieldSet);
+
+            // Collect method calls
             m.findAll(MethodCallExpr.class).forEach(call ->
                     ResolutionUtils.resolveMethod(call).ifPresent(r -> {
-                        ctx.getMethodsCalled().add(r.getQualifiedSignature());
-                        addEfferentIfInBounds(ctx, r.getPackageName() + "." + r.getClassName());
+                        methodsCalled.add(r.getQualifiedSignature());
+                        String calledClass = r.getPackageName() + "." + r.getClassName();
+                        addDependencyIfInBounds(dependencies, calledClass, qualifiedName);
                     })
             );
         });
 
-        // super types
+        // Add all dependencies and method calls to builder
+        dependencies.forEach(builder::addDependency);
+        methodsCalled.forEach(builder::addMethodCalled);
+        methodFieldSets.forEach(builder::addMethodFieldSet);
+
+        // Collect direct parents
+        Set<String> directParents = new HashSet<>();
         if (node.isClassOrInterfaceDeclaration()) {
             node.asClassOrInterfaceDeclaration()
                     .getExtendedTypes()
                     .forEach(et ->
                             ResolutionUtils.resolveTypeName(et).ifPresent(parent -> {
-                                // inheritance fact (for NOCC, DIT, etc.)
-                                ctx.addDirectParent(parent);
-
-                                // coupling fact (for CBO-like metrics)
-                                addEfferentIfInBounds(ctx, parent);
+                                directParents.add(parent);
+                                addDependencyIfInBounds(dependencies, parent, qualifiedName);
                             })
                     );
         }
+        directParents.forEach(builder::addDirectParent);
 
+        // Pre-compute DIT (Depth of Inheritance Tree)
+        int dit = computeDepthOfInheritance(node);
+        builder.depthOfInheritance(dit);
+
+        // Pre-compute MPC (Message Passing Coupling)
+        int mpc = computeMessagePassingCoupling(node, qualifiedName);
+        builder.messagePassingCoupling(mpc);
+
+        // Pre-compute DAC (Data Abstraction Coupling)
+        int dac = computeDataAbstractionCoupling(node, qualifiedName);
+        builder.dataAbstractionCoupling(dac);
+
+        // Pre-compute Size1 (total member lines)
+        int totalMemberLines = computeTotalMemberLines(node);
+        builder.totalMemberLines(totalMemberLines);
+
+        // Pre-compute inner class count
+        int innerClassCount = computeInnerClassCount(node);
+        builder.innerClassCount(innerClassCount);
+
+        // Build the ClassData
+        ClassData classData = builder.build();
+        javaClass.setClassData(classData);
+
+        // Run all single-class metric calculators
         QualityMetrics qm = javaClass.getQualityMetrics();
-        calculators.forEach(c -> c.compute(ctx, qm));
+        calculators.forEach(c -> c.compute(classData, qm));
     }
 
     private boolean belongsToThisFile() {
@@ -116,18 +179,76 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                         .findFirst());
     }
 
-    private void addEfferentIfInBounds(ClassContext ctx, String qname) {
-        if (qname != null && !isSelf(ctx, qname) && bounds.contains(qname)) {
-            ctx.getEfferent().add(qname);
+    private void addDependencyIfInBounds(Set<String> dependencies, String typeName, String selfQualifiedName) {
+        if (typeName != null && !typeName.equals(selfQualifiedName) && bounds.contains(typeName)) {
+            dependencies.add(typeName);
         }
     }
 
-    private boolean isSelf(ClassContext ctx, String qname) {
-        if (qname == null) {
-            return false;
+    private int computeDepthOfInheritance(TypeDeclaration<?> node) {
+        try {
+            return (int) node.resolve()
+                    .getAllAncestors()
+                    .stream()
+                    .filter(ancestor -> bounds.contains(ancestor.getQualifiedName()))
+                    .count();
+        } catch (Throwable ignored) {
+            return 0;
         }
-        var classNameOptional = ResolutionUtils.resolveClassName(ctx.getDecl());
-        return classNameOptional.filter(qname::equals).isPresent();
+    }
+
+    private int computeMessagePassingCoupling(TypeDeclaration<?> node, String selfQualifiedName) {
+        int count = 0;
+        for (MethodCallExpr methodCallExpr : node.findAll(MethodCallExpr.class)) {
+            try {
+                String methodSignature = methodCallExpr.resolve().getQualifiedSignature();
+                String methodClass = methodSignature.substring(0, methodSignature.lastIndexOf("."));
+                if (!methodClass.equals(selfQualifiedName) && bounds.contains(methodClass)) {
+                    count++;
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        return count;
+    }
+
+    private int computeDataAbstractionCoupling(TypeDeclaration<?> node, String selfQualifiedName) {
+        int count = 0;
+        for (FieldDeclaration field : node.getFields()) {
+            if (field.getElementType().isPrimitiveType()) {
+                continue;
+            }
+            try {
+                String typeName = field.getElementType().resolve().asReferenceType().getQualifiedName();
+                if (!typeName.equals(selfQualifiedName) && bounds.contains(typeName)) {
+                    count++;
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        return count;
+    }
+
+    private int computeTotalMemberLines(TypeDeclaration<?> node) {
+        int totalLines = 0;
+        for (BodyDeclaration<?> member : node.getMembers()) {
+            if (member.getBegin().isPresent() && member.getEnd().isPresent()) {
+                Position begin = member.getBegin().get();
+                Position end = member.getEnd().get();
+                totalLines += Math.max(0, end.line - begin.line);
+            }
+        }
+        return totalLines;
+    }
+
+    private int computeInnerClassCount(TypeDeclaration<?> node) {
+        int count = 0;
+        for (BodyDeclaration<?> member : node.getMembers()) {
+            if (member.isClassOrInterfaceDeclaration()) {
+                count++;
+            }
+        }
+        return count;
     }
 
 }

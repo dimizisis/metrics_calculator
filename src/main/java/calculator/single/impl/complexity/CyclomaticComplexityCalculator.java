@@ -5,30 +5,30 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.SwitchExpr;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.SwitchStmt;
-import context.ClassContext;
+import context.ClassData;
 import infrastructure.metrics.QualityMetrics;
 
 public class CyclomaticComplexityCalculator implements ClassMetricCalculator {
     @Override
-    public void compute(ClassContext ctx, QualityMetrics qm) {
+    public void compute(ClassData classData, QualityMetrics metrics) {
         double total = 0.0;
         int methodCount = 0;
 
-        for (MethodDeclaration method : ctx.getDecl().getMethods()) {
-            if (!method.isAbstract() && !method.isNative()) {
+        for (MethodDeclaration method : classData.getMethods()) {
+            if (!method.isAbstract() && !method.isNative() && !method.isConstructorDeclaration()) {
                 int cc = countIfs(method) + countSwitch(method) + countSwitchExpressions(method) + 1;
                 total += cc;
                 methodCount++;
             }
         }
 
-        // If class has no constructors, still count 1 path
-        if (ctx.getDecl().getConstructors().isEmpty()) {
-            methodCount++;
+        // Default to 1 if no methods
+        if (methodCount == 0) {
+            methodCount = 1;
         }
 
-        double avg = methodCount > 0 ? total / methodCount : -1.0;
-        qm.setComplexity(avg);
+        double avg = total / methodCount;
+        metrics.setComplexity(avg);
     }
 
     private int countIfs(MethodDeclaration method) {

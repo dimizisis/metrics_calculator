@@ -1,23 +1,12 @@
 package calculator.single.impl.complexity;
 
 import calculator.single.ClassMetricCalculator;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import context.ClassContext;
+import context.ClassData;
 import infrastructure.metrics.QualityMetrics;
 
 public class MpcCalculator implements ClassMetricCalculator {
     @Override
-    public void compute(ClassContext ctx, QualityMetrics qm) {
-        var methodsCalledCount = 0;
-        for (MethodCallExpr methodCallExpr : ctx.getDecl().findAll(MethodCallExpr.class)) {
-            try {
-                String methodCallExprQualifiedSignature = methodCallExpr.resolve().getQualifiedSignature();
-                String methodCallExprClass = methodCallExprQualifiedSignature.substring(0, methodCallExprQualifiedSignature.lastIndexOf("."));
-                if (ctx.getBounds().contains(methodCallExprClass))
-                    ++methodsCalledCount;
-            } catch (Throwable ignored) {
-            }
-        }
-        qm.setMpc(methodsCalledCount);
+    public void compute(ClassData classData, QualityMetrics metrics) {
+        metrics.setMpc(classData.getMessagePassingCoupling());
     }
 }

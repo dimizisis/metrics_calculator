@@ -1,23 +1,24 @@
 package calculator.aggregate.impl.coupling;
 
-import calculator.aggregate.index.ProjectIndex;
-import calculator.aggregate.ProjectMetricCalculator;
-import context.ClassContext;
-import lombok.AllArgsConstructor;
+import calculator.aggregate.AggregateMetricCalculator;
+import context.ClassData;
+import infrastructure.metrics.QualityMetrics;
+import repository.MetricsRepository;
 
-import java.util.Collection;
-
-@AllArgsConstructor
-public class NoccCalculator implements ProjectMetricCalculator {
-
-    private final ProjectIndex projectIndex;
+public class NoccCalculator implements AggregateMetricCalculator {
 
     @Override
-    public void compute(Collection<ClassContext> contexts) {
-        for (ClassContext childCtx : contexts) {
-            for (String parent : childCtx.getDirectParents()) {
-                projectIndex.find(parent)
-                        .ifPresent(p -> p.getQualityMetrics().incrementNocc());
+    public void compute(MetricsRepository repository) {
+        for (String className : repository.getProjectClassNames()) {
+            ClassData classData = repository.getClassData(className);
+
+            for (String parent : classData.getDirectParents()) {
+                if (repository.isProjectClass(parent)) {
+                    QualityMetrics parentMetrics = repository.getMetrics(parent);
+                    if (parentMetrics != null) {
+                        parentMetrics.incrementNocc();
+                    }
+                }
             }
         }
     }

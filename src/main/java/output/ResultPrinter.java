@@ -1,5 +1,6 @@
 package output;
 
+import infrastructure.metrics.QualityMetrics;
 import main.ProjectMetricsAnalyzer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,6 +8,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ResultPrinter {
 
@@ -15,11 +19,19 @@ public class ResultPrinter {
     private ResultPrinter() {
     }
 
-    private static final String[] HEADERS = { "Name",
-            "WMC", "DIT", "NOCC", "CBO", "RFC", "LCOM",
-            "WMC*", "NOM", "MPC", "DAC", "SIZE1", "SIZE2", "DSC", "NOH", "ANA", "DAM", "DCC", "CAMC", "MOA", "MFA", "NOP", "CIS", "NPM",
-            "Reusability", "Flexibility", "Understandability", "Functionality", "Extendibility", "Effectiveness",
-            "fanIn", "ClassNames" };
+    /**
+     * Dynamically generates headers: "Name" + all QualityMetrics field names + "ClassNames"
+     * This automatically adapts when new metrics are added to QualityMetrics.
+     *
+     * @return array of header names
+     */
+    private static String[] getHeaders() {
+        List<String> headers = new ArrayList<>();
+        headers.add("Name");
+        headers.addAll(Arrays.asList(QualityMetrics.getMetricNames()));
+        headers.add("ClassNames");
+        return headers.toArray(new String[0]);
+    }
 
 
     /** *
@@ -72,8 +84,9 @@ public class ResultPrinter {
     }
 
     private static void appendHeaders(StringBuilder data, String delimiter) {
-        for (String header : HEADERS)
+        for (String header : getHeaders()) {
             data.append(header).append(delimiter);
+        }
     }
 
     private static boolean writeFile(String path, StringBuilder data) {

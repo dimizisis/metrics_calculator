@@ -1,19 +1,13 @@
 package calculator.single.impl.size;
 
 import calculator.single.ClassMetricCalculator;
-import com.github.javaparser.ast.body.BodyDeclaration;
-import context.ClassContext;
+import context.ClassData;
 import infrastructure.metrics.QualityMetrics;
 
 public class DscCalculator implements ClassMetricCalculator {
     @Override
-    public void compute(ClassContext ctx, QualityMetrics qm) {
-        int classesNum = 1;
-        for (BodyDeclaration<?> member : ctx.getDecl().getMembers()) {
-            if (member.isClassOrInterfaceDeclaration()) {
-                ++classesNum;
-            }
-        }
-        qm.setDsc(classesNum);
+    public void compute(ClassData classData, QualityMetrics metrics) {
+        int classesNum = 1 + classData.getInnerClassCount();
+        metrics.setDsc(classesNum);
     }
 }

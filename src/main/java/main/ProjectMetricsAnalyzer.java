@@ -13,7 +13,6 @@ import calculator.single.impl.size.DscCalculator;
 import calculator.single.impl.size.Size1Calculator;
 import calculator.single.impl.size.Size2Calculator;
 import calculator.aggregate.impl.coupling.NoccCalculator;
-import calculator.aggregate.index.ProjectIndex;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
@@ -26,10 +25,11 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
-import context.ClassContext;
 import infrastructure.entities.JavaClass;
 import infrastructure.entities.JavaFile;
 import infrastructure.entities.Project;
+import repository.InMemoryMetricsRepository;
+import repository.MetricsRepository;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,16 +82,17 @@ public class ProjectMetricsAnalyzer {
     }
 
     private void aggregateProjectMetrics() {
+        // First aggregate metrics at file level
         project.getJavaFiles().forEach(JavaFile::aggregateMetrics);
 
-        var projectIndex = new ProjectIndex(project.getJavaFiles());
-
-        List<ClassContext> allContexts = project.getJavaFiles().stream()
+        // Create repository with all classes
+        List<JavaClass> allClasses = project.getJavaFiles().stream()
                 .flatMap(f -> f.getClasses().stream())
-                .map(JavaClass::getClassContext)
                 .toList();
+        MetricsRepository repository = new InMemoryMetricsRepository(allClasses);
 
-        new NoccCalculator(projectIndex).compute(allContexts);
+        // Run aggregate metric calculators
+        new NoccCalculator().compute(repository);
     }
 
     private ProjectRoot getProjectRoot(String projectDir) {

@@ -1,14 +1,14 @@
 package calculator.single.impl.coupling;
 
 import calculator.single.ClassMetricCalculator;
-import context.ClassContext;
+import context.ClassData;
 import infrastructure.metrics.QualityMetrics;
 
 public class CboCalculator implements ClassMetricCalculator {
     @Override
-    public void compute(ClassContext ctx, QualityMetrics qm) {
-        double fanOut = ctx.getEfferent().size();
-        qm.setCbo(fanOut);
-        qm.setDcc(fanOut);
+    public void compute(ClassData classData, QualityMetrics metrics) {
+        double fanOut = classData.getDependencies().size();
+        metrics.setCbo(fanOut);
+        metrics.setDcc(fanOut);
     }
 }

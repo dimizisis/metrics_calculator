@@ -1,18 +1,18 @@
 package calculator.single.impl.cohesion;
 
 import calculator.single.ClassMetricCalculator;
-import context.ClassContext;
+import context.ClassData;
 import infrastructure.metrics.QualityMetrics;
 
 import java.util.TreeSet;
 
 public class LcomCalculator implements ClassMetricCalculator {
     @Override
-    public void compute(ClassContext ctx, QualityMetrics qm) {
-        var sets = ctx.getMethodFieldSets();
+    public void compute(ClassData classData, QualityMetrics metrics) {
+        var sets = classData.getMethodFieldSets();
         int n = sets.size();
         if (n == 0) {
-            qm.setLcom(-1.0);
+            metrics.setLcom(-1.0);
             return;
         }
 
@@ -27,6 +27,6 @@ public class LcomCalculator implements ClassMetricCalculator {
                 }
             }
         }
-        qm.setLcom(Math.max(lcom, 0.0));
+        metrics.setLcom(Math.max(lcom, 0.0));
     }
 }
