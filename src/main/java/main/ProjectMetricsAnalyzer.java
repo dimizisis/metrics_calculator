@@ -1,17 +1,19 @@
 package main;
 
 import analysis.ProjectAnalysisBounds;
-import calculator.MetricCalculator;
-import calculator.impl.cohesion.LcomCalculator;
-import calculator.impl.complexity.CyclomaticComplexityCalculator;
-import calculator.impl.complexity.DitCalculator;
-import calculator.impl.complexity.MpcCalculator;
-import calculator.impl.complexity.WmcCalculator;
-import calculator.impl.coupling.CboCalculator;
-import calculator.impl.coupling.DacCalculator;
-import calculator.impl.size.DscCalculator;
-import calculator.impl.size.Size1Calculator;
-import calculator.impl.size.Size2Calculator;
+import calculator.perclass.ClassMetricCalculator;
+import calculator.perclass.impl.cohesion.LcomCalculator;
+import calculator.perclass.impl.complexity.CyclomaticComplexityCalculator;
+import calculator.perclass.impl.complexity.DitCalculator;
+import calculator.perclass.impl.complexity.MpcCalculator;
+import calculator.perclass.impl.complexity.WmcCalculator;
+import calculator.perclass.impl.coupling.CboCalculator;
+import calculator.perclass.impl.coupling.DacCalculator;
+import calculator.perclass.impl.size.DscCalculator;
+import calculator.perclass.impl.size.Size1Calculator;
+import calculator.perclass.impl.size.Size2Calculator;
+import calculator.project.impl.coupling.NoccCalculator;
+import calculator.project.index.ProjectIndex;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
@@ -24,6 +26,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
+import context.ClassContext;
 import infrastructure.entities.JavaClass;
 import infrastructure.entities.JavaFile;
 import infrastructure.entities.Project;
@@ -44,7 +47,7 @@ public class ProjectMetricsAnalyzer {
     @Getter
     private final Project project;
 
-    private final List<MetricCalculator> calculators; // build once
+    private final List<ClassMetricCalculator> calculators; // build once
 
     private AtomicInteger fileAnalysisProgressPercentage;
 
@@ -80,6 +83,15 @@ public class ProjectMetricsAnalyzer {
 
     private void aggregateProjectMetrics() {
         project.getJavaFiles().forEach(JavaFile::aggregateMetrics);
+
+        var projectIndex = new ProjectIndex(project.getJavaFiles());
+
+        List<ClassContext> allContexts = project.getJavaFiles().stream()
+                .flatMap(f -> f.getClasses().stream())
+                .map(JavaClass::getClassContext)
+                .toList();
+
+        new NoccCalculator(projectIndex).compute(allContexts);
     }
 
     private ProjectRoot getProjectRoot(String projectDir) {
@@ -168,7 +180,7 @@ public class ProjectMetricsAnalyzer {
         analyzeEnums(cu);
     }
 
-    private List<MetricCalculator> buildCalculators() {
+    private List<ClassMetricCalculator> buildCalculators() {
         return List.of(
                 new LcomCalculator(),
                 new CyclomaticComplexityCalculator(),

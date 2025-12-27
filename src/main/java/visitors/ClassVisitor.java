@@ -1,7 +1,7 @@
 package visitors;
 
 import analysis.AnalysisBounds;
-import calculator.MetricCalculator;
+import calculator.perclass.ClassMetricCalculator;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -26,7 +26,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
     private final Set<JavaFile> javaFiles;
     private final AnalysisBounds bounds;
     private final String filePath;
-    private final List<MetricCalculator> calculators;
+    private final List<ClassMetricCalculator> calculators;
 
     @Override
     public void visit(ClassOrInterfaceDeclaration d, Void arg) {
@@ -57,6 +57,8 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
         var ctx = new ClassContext(node, bounds);
 
+        javaClass.setClassContext(ctx);
+
         node.getMethods().forEach(m -> {
             ctx.startMethod(m);
 
@@ -82,10 +84,19 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
             );
         });
 
-        // super types (helps CBO-ish counts and ancestry-based metrics if you add them)
+        // super types
         if (node.isClassOrInterfaceDeclaration()) {
-            node.asClassOrInterfaceDeclaration().getExtendedTypes().forEach(et ->
-                    ResolutionUtils.resolveTypeName(et).ifPresent(t -> addEfferentIfInBounds(ctx, t)));
+            node.asClassOrInterfaceDeclaration()
+                    .getExtendedTypes()
+                    .forEach(et ->
+                            ResolutionUtils.resolveTypeName(et).ifPresent(parent -> {
+                                // inheritance fact (for NOCC, DIT, etc.)
+                                ctx.addDirectParent(parent);
+
+                                // coupling fact (for CBO-like metrics)
+                                addEfferentIfInBounds(ctx, parent);
+                            })
+                    );
         }
 
         QualityMetrics qm = javaClass.getQualityMetrics();

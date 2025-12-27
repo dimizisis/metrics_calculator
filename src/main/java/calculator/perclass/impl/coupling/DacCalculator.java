@@ -1,11 +1,11 @@
-package calculator.impl.coupling;
+package calculator.perclass.impl.coupling;
 
-import calculator.MetricCalculator;
+import calculator.perclass.ClassMetricCalculator;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 
-public class DacCalculator implements MetricCalculator {
+public class DacCalculator implements ClassMetricCalculator {
     @Override
     public void compute(ClassContext ctx, QualityMetrics qm) {
         var dac = 0;

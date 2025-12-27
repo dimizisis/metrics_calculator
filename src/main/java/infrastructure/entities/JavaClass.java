@@ -1,5 +1,6 @@
 package infrastructure.entities;
 
+import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,6 +15,7 @@ public class JavaClass {
     @ToString.Include
     private String qualifiedName;
     private QualityMetrics qualityMetrics;
+    private ClassContext classContext;
 
     public JavaClass(String name) {
         this.qualifiedName = name;

@@ -1,11 +1,11 @@
-package calculator.impl.complexity;
+package calculator.perclass.impl.complexity;
 
-import calculator.MetricCalculator;
+import calculator.perclass.ClassMetricCalculator;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 
-public class MpcCalculator implements MetricCalculator {
+public class MpcCalculator implements ClassMetricCalculator {
     @Override
     public void compute(ClassContext ctx, QualityMetrics qm) {
         var methodsCalledCount = 0;

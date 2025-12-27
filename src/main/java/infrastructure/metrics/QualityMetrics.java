@@ -112,6 +112,15 @@ public class QualityMetrics {
         return metricValue;
     }
 
+    /** *
+     * Increments the number of occurrences (nocc) by 1.
+     *
+     * @return The updated value of nocc after incrementing.
+     */
+    public int incrementNocc() {
+        return ++nocc;
+    }
+
     @Override
     public String toString() {
         return getWmc() + "\t" + getDit() + "\t" + getNocc() + "\t" + getCbo() + "\t" + getRfc() + "\t" + getLcom() + "\t" + getComplexity() + "\t" + getNom() + "\t" + getMpc() + "\t" + getDac() + "\t" + getSize1() + "\t" + getSize2() + "\t" + getDsc() + "\t" + getNoh() + "\t" + getAna() + "\t" + getDam() + "\t" + getDcc() + "\t" + getCamc() + "\t" + getMoa() + "\t" + getMfa() + "\t" + getNop() + "\t" + getCis() + "\t" + getNpm() + "\t" + getReusability() + "\t" + getFlexibility() + "\t" + getUnderstandability() + "\t" + getFunctionality() + "\t" + getExtendibility() + "\t" + getEffectiveness() + "\t" + getFanIn();

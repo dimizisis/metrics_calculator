@@ -1,12 +1,12 @@
-package calculator.impl.cohesion;
+package calculator.perclass.impl.cohesion;
 
-import calculator.MetricCalculator;
+import calculator.perclass.ClassMetricCalculator;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 
 import java.util.TreeSet;
 
-public class LcomCalculator implements MetricCalculator {
+public class LcomCalculator implements ClassMetricCalculator {
     @Override
     public void compute(ClassContext ctx, QualityMetrics qm) {
         var sets = ctx.getMethodFieldSets();

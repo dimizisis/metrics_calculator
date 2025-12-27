@@ -1,11 +1,11 @@
-package calculator.impl.size;
+package calculator.perclass.impl.size;
 
-import calculator.MetricCalculator;
+import calculator.perclass.ClassMetricCalculator;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 
-public class DscCalculator implements MetricCalculator {
+public class DscCalculator implements ClassMetricCalculator {
     @Override
     public void compute(ClassContext ctx, QualityMetrics qm) {
         int classesNum = 1;

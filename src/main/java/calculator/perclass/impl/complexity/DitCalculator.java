@@ -1,10 +1,10 @@
-package calculator.impl.complexity;
+package calculator.perclass.impl.complexity;
 
-import calculator.MetricCalculator;
+import calculator.perclass.ClassMetricCalculator;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 
-public class DitCalculator implements MetricCalculator {
+public class DitCalculator implements ClassMetricCalculator {
     @Override
     public void compute(ClassContext ctx, QualityMetrics qm) {
         int dit = 0;

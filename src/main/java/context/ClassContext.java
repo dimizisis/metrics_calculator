@@ -17,6 +17,7 @@ public class ClassContext {
     private final List<TreeSet<String>> methodFieldSets = new ArrayList<>();
     private final Set<String> methodsCalled = new HashSet<>();
     private final Set<String> efferent = new HashSet<>();
+    private final Set<String> directParents = new HashSet<>();
 
     public ClassContext(TypeDeclaration<?> decl, AnalysisBounds bounds) {
         this.decl = decl;
@@ -38,5 +39,9 @@ public class ClassContext {
 
     public void noteFieldAccess(String field) {
         methodFieldSets.getLast().add(field);
+    }
+
+    public void addDirectParent(String qname) {
+        directParents.add(qname);
     }
 }

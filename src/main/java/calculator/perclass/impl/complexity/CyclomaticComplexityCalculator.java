@@ -1,6 +1,6 @@
-package calculator.impl.complexity;
+package calculator.perclass.impl.complexity;
 
-import calculator.MetricCalculator;
+import calculator.perclass.ClassMetricCalculator;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.SwitchExpr;
 import com.github.javaparser.ast.stmt.IfStmt;
@@ -8,7 +8,7 @@ import com.github.javaparser.ast.stmt.SwitchStmt;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 
-public class CyclomaticComplexityCalculator implements MetricCalculator {
+public class CyclomaticComplexityCalculator implements ClassMetricCalculator {
     @Override
     public void compute(ClassContext ctx, QualityMetrics qm) {
         double total = 0.0;

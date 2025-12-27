@@ -1,10 +1,10 @@
-package calculator.impl.complexity;
+package calculator.perclass.impl.complexity;
 
-import calculator.MetricCalculator;
+import calculator.perclass.ClassMetricCalculator;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 
-public class WmcCalculator implements MetricCalculator {
+public class WmcCalculator implements ClassMetricCalculator {
     @Override
     public void compute(ClassContext ctx, QualityMetrics qm) {
         var wmc = ctx
