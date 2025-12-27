@@ -4,6 +4,8 @@ import analysis.ProjectAnalysisBounds;
 import calculator.MetricCalculator;
 import calculator.impl.cohesion.LcomCalculator;
 import calculator.impl.complexity.CyclomaticComplexityCalculator;
+import calculator.impl.complexity.DitCalculator;
+import calculator.impl.complexity.WmcCalculator;
 import calculator.impl.coupling.CboCalculator;
 import calculator.impl.size.DscCalculator;
 import calculator.impl.size.Size1Calculator;
@@ -171,7 +173,8 @@ public class ProjectMetricsAnalyzer {
                 new Size1Calculator(),
                 new Size2Calculator(),
                 new CboCalculator(),
-                new DscCalculator()
+                new DscCalculator(),
+                new DitCalculator()
         );
     }
 
