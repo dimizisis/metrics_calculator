@@ -1,4 +1,4 @@
-name: Increment Version and Create Release
+name: Increment Version, Update pom.xml, Create Release
 
 on:
   push:
@@ -6,8 +6,7 @@ on:
       - master
 
 jobs:
-  create-release:
-    name: Increment Version, Tag, Release, Upload JAR
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,6 +16,12 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
       - name: Get Latest Tag
         id: get_latest_tag
         run: |
@@ -25,50 +30,52 @@ jobs:
           echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
 
       - name: Increment Version
-        id: increment_version
         run: |
           version="${LATEST_TAG/v/}"
           IFS='.' read -r major minor patch <<< "$version"
           patch=$((patch + 1))
-          new_version="v${major}.${minor}.${patch}"
+          new_version="${major}.${minor}.${patch}"
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
+          echo "TAG_NAME=v$new_version" >> $GITHUB_ENV
 
-      - name: Set Up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
+      - name: Update version in pom.xml
+        run: mvn versions:set -DnewVersion=${{ env.NEW_VERSION }}
+
+      - name: Commit and Push updated version
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git commit -am "Bump version to ${{ env.NEW_VERSION }}"
+          git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and Push Git Tag
+        run: |
+          git tag ${{ env.TAG_NAME }}
+          git push origin ${{ env.TAG_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Fat JAR
         run: mvn package -DskipTests
 
-      - name: Create and Push Tag
+      - name: Create GitHub Release
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag ${{ env.NEW_VERSION }}
-          git push origin ${{ env.NEW_VERSION }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create GitHub Release with CLI
-        run: |
-          gh release create "$NEW_VERSION" \
-            --title "Release $NEW_VERSION" \
-            --notes "Automated release for $NEW_VERSION." \
+          gh release create "$TAG_NAME" \
+            --title "Release $TAG_NAME" \
+            --notes "Automated release for $TAG_NAME" \
             --verify-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NEW_VERSION: ${{ env.NEW_VERSION }}
 
       - name: Upload Fat JAR to Release
         run: |
           JAR_FILE=$(find target -type f -name '*jar-with-dependencies.jar' | head -n 1)
           if [[ -z "$JAR_FILE" ]]; then
-            echo "❌ No fat JAR found. Make sure maven-shade or assembly plugin is configured."
+            echo "❌ No fat JAR found."
             exit 1
           fi
-          gh release upload "$NEW_VERSION" "$JAR_FILE" --clobber
+          gh release upload "$TAG_NAME" "$JAR_FILE" --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NEW_VERSION: ${{ env.NEW_VERSION }}
