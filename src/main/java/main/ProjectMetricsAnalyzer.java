@@ -1,5 +1,6 @@
 package main;
 
+import analysis.ProjectAnalysisBounds;
 import calculator.MetricCalculator;
 import calculator.impl.cohesion.LcomCalculator;
 import calculator.impl.complexity.CyclomaticComplexityCalculator;
@@ -184,6 +185,7 @@ public class ProjectMetricsAnalyzer {
             try {
                 cl.accept(new ClassVisitor(
                         project.getJavaFiles(),
+                        new ProjectAnalysisBounds(project.getJavaFiles()),
                         rel,
                         calculators
                 ), null);
@@ -200,6 +202,7 @@ public class ProjectMetricsAnalyzer {
             try {
                 en.accept(new ClassVisitor(
                         project.getJavaFiles(),
+                        new ProjectAnalysisBounds(project.getJavaFiles()),
                         rel,
                         calculators
                 ), null);

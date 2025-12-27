@@ -1,5 +1,6 @@
 package visitors;
 
+import analysis.AnalysisBounds;
 import calculator.MetricCalculator;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
@@ -23,6 +24,7 @@ import java.util.Set;
 public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
     private final Set<JavaFile> javaFiles;
+    private final AnalysisBounds bounds;
     private final String filePath;
     private final List<MetricCalculator> calculators;
 
@@ -53,7 +55,7 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
 
         JavaClass javaClass = javaClassOptional.get();
 
-        var ctx = new ClassContext(node);
+        var ctx = new ClassContext(node, bounds);
 
         node.getMethods().forEach(m -> {
             ctx.startMethod(m);
@@ -103,14 +105,8 @@ public class ClassVisitor extends VoidVisitorAdapter<Void> {
                         .findFirst());
     }
 
-    private boolean withinAnalysisBounds(String qname) {
-        return javaFiles.stream()
-                .flatMap(f -> f.getClasses().stream())
-                .anyMatch(c -> qname.equals(c.getQualifiedName()));
-    }
-
     private void addEfferentIfInBounds(ClassContext ctx, String qname) {
-        if (qname != null && !isSelf(ctx, qname) && withinAnalysisBounds(qname)) {
+        if (qname != null && !isSelf(ctx, qname) && bounds.contains(qname)) {
             ctx.getEfferent().add(qname);
         }
     }
