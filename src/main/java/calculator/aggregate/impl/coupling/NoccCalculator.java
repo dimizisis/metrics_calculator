@@ -10,7 +10,6 @@ import repository.MetricsRepository;
  * NOCC represents the number of direct subclasses that inherit from this class.
  */
 public class NoccCalculator implements AggregateMetricCalculator {
-
     @Override
     public void compute(MetricsRepository repository) {
         for (String className : repository.getProjectClassNames()) {
