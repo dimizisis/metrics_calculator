@@ -54,10 +54,10 @@ public class ProjectMetricsAnalyzer {
         this.calculators = buildCalculators();
     }
 
-    /**
-     * Start the whole process
+    /** *
+     * Start the analysis of the project.
      *
-     * @return 0 if everything went ok, -1 otherwise
+     * @return 0 if the analysis was successful, -1 otherwise.
      */
     public int start() {
         ProjectRoot projectRoot = getProjectRoot(project.getClonePath());
@@ -215,10 +215,20 @@ public class ProjectMetricsAnalyzer {
         });
     }
 
+    /** *
+     * Get the overall progress of the file analysis.
+     *
+     * @return AtomicInteger representing the overall progress percentage.
+     */
     public AtomicInteger getOverallProgress() {
         return fileAnalysisProgressPercentage;
     }
 
+    /** *
+     * Set the overall progress of the file analysis.
+     *
+     * @param fileAnalysisProgressPercentage AtomicInteger representing the overall progress percentage.
+     */
     public void setOverallProgress(AtomicInteger fileAnalysisProgressPercentage) {
         this.fileAnalysisProgressPercentage = fileAnalysisProgressPercentage;
     }

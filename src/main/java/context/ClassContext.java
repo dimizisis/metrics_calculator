@@ -26,6 +26,11 @@ public class ClassContext {
         }
     }
 
+    /** *
+     * Call when starting analysis of a new method.
+     *
+     * @param m the method being analyzed
+     */
     public void startMethod(MethodDeclaration m) {
         methods.add(m);
         methodFieldSets.add(new TreeSet<>());

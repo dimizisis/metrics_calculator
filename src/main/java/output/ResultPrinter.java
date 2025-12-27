@@ -22,6 +22,13 @@ public class ResultPrinter {
             "fanIn", "ClassNames" };
 
 
+    /** *
+     * Print the analysis results in a CSV file.
+     *
+     * @param mc                The ProjectMetricsAnalyzer containing the analysis results.
+     * @param fullOutFilePath   The full path of the output CSV file.
+     * @return true if the file was written successfully, false otherwise.
+     */
     public static boolean printCSV(ProjectMetricsAnalyzer mc, String fullOutFilePath) {
         StringBuilder output = new StringBuilder();
         appendHeaders(output, "\t");
@@ -31,6 +38,14 @@ public class ResultPrinter {
         return writeFile(fullOutFilePath, output);
     }
 
+    /** *
+     * Print the analysis results in a CSV file with a custom delimiter.
+     *
+     * @param mc                The ProjectMetricsAnalyzer containing the analysis results.
+     * @param fullOutFilePath   The full path of the output CSV file.
+     * @param delimiter         The delimiter to use in the CSV file.
+     * @return true if the file was written successfully, false otherwise.
+     */
     public static boolean printCSV(ProjectMetricsAnalyzer mc, String fullOutFilePath, String delimiter) {
         StringBuilder output = new StringBuilder();
         appendHeaders(output, delimiter);
@@ -40,6 +55,12 @@ public class ResultPrinter {
         return writeFile(fullOutFilePath, output);
     }
 
+    /** *
+     * Print the analysis results to the console.
+     *
+     * @param mc    The ProjectMetricsAnalyzer containing the analysis results.
+     * @return true if the results were printed successfully, false otherwise.
+     */
     public static boolean printString(ProjectMetricsAnalyzer mc) {
         StringBuilder output = new StringBuilder();
         appendHeaders(output, "\t");

@@ -12,6 +12,12 @@ import java.util.Optional;
 @UtilityClass
 public final class ResolutionUtils {
 
+    /** *
+     * Resolve the given type and return its name.
+     *
+     * @param t the type to resolve
+     * @return an Optional containing the resolved type name, or empty if resolution fails
+     */
     public static Optional<String> resolveTypeName(Type t) {
         try {
             return Optional.of(t.resolve().describe());
@@ -20,6 +26,12 @@ public final class ResolutionUtils {
         }
     }
 
+    /** *
+     * Resolve the given method call expression.
+     *
+     * @param c the method call expression to resolve
+     * @return an Optional containing the resolved method declaration, or empty if resolution fails
+     */
     public static Optional<ResolvedMethodDeclaration> resolveMethod(MethodCallExpr c) {
         try {
             return Optional.of(c.resolve());
@@ -28,6 +40,12 @@ public final class ResolutionUtils {
         }
     }
 
+    /** *
+     * Resolve the given type declaration and return its qualified name.
+     *
+     * @param d the type declaration to resolve
+     * @return an Optional containing the resolved qualified name, or empty if resolution fails
+     */
     public static Optional<String> resolveClassName(TypeDeclaration<?> d) {
         try {
             return Optional.of(d.resolve().getQualifiedName());
