@@ -1,6 +1,6 @@
-package calculator.perclass.impl.complexity;
+package calculator.single.impl.complexity;
 
-import calculator.perclass.ClassMetricCalculator;
+import calculator.single.ClassMetricCalculator;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 

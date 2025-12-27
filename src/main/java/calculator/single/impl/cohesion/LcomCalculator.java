@@ -1,6 +1,6 @@
-package calculator.perclass.impl.cohesion;
+package calculator.single.impl.cohesion;
 
-import calculator.perclass.ClassMetricCalculator;
+import calculator.single.ClassMetricCalculator;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 

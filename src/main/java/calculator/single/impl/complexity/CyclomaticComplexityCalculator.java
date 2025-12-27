@@ -1,6 +1,6 @@
-package calculator.perclass.impl.complexity;
+package calculator.single.impl.complexity;
 
-import calculator.perclass.ClassMetricCalculator;
+import calculator.single.ClassMetricCalculator;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.SwitchExpr;
 import com.github.javaparser.ast.stmt.IfStmt;

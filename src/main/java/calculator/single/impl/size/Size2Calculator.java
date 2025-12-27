@@ -1,6 +1,6 @@
-package calculator.perclass.impl.size;
+package calculator.single.impl.size;
 
-import calculator.perclass.ClassMetricCalculator;
+import calculator.single.ClassMetricCalculator;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
 

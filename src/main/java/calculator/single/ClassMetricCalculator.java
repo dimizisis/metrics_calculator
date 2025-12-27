@@ -1,4 +1,4 @@
-package calculator.perclass;
+package calculator.single;
 
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;

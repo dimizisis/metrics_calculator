@@ -1,4 +1,4 @@
-package calculator.project.index;
+package calculator.aggregate.index;
 
 import infrastructure.entities.JavaClass;
 import infrastructure.entities.JavaFile;

@@ -1,4 +1,4 @@
-package calculator.project;
+package calculator.aggregate;
 
 import context.ClassContext;
 

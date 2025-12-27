@@ -1,7 +1,7 @@
-package calculator.project.impl.coupling;
+package calculator.aggregate.impl.coupling;
 
-import calculator.project.index.ProjectIndex;
-import calculator.project.ProjectMetricCalculator;
+import calculator.aggregate.index.ProjectIndex;
+import calculator.aggregate.ProjectMetricCalculator;
 import context.ClassContext;
 import lombok.AllArgsConstructor;
 

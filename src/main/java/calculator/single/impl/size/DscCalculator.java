@@ -1,6 +1,6 @@
-package calculator.perclass.impl.size;
+package calculator.single.impl.size;
 
-import calculator.perclass.ClassMetricCalculator;
+import calculator.single.ClassMetricCalculator;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import context.ClassContext;
 import infrastructure.metrics.QualityMetrics;
