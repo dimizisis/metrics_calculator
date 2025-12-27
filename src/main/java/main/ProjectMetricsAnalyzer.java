@@ -8,6 +8,7 @@ import calculator.impl.complexity.DitCalculator;
 import calculator.impl.complexity.MpcCalculator;
 import calculator.impl.complexity.WmcCalculator;
 import calculator.impl.coupling.CboCalculator;
+import calculator.impl.coupling.DacCalculator;
 import calculator.impl.size.DscCalculator;
 import calculator.impl.size.Size1Calculator;
 import calculator.impl.size.Size2Calculator;
@@ -177,7 +178,8 @@ public class ProjectMetricsAnalyzer {
                 new DscCalculator(),
                 new WmcCalculator(),
                 new DitCalculator(),
-                new MpcCalculator()
+                new MpcCalculator(),
+                new DacCalculator()
         );
     }
 
