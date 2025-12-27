@@ -1,4 +1,4 @@
-name: Increment Version, Update pom.xml, Create Release
+name: Increment Version, Create Release
 
 on:
   push:
