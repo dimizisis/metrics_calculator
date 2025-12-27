@@ -8,6 +8,12 @@ import com.github.javaparser.ast.stmt.SwitchStmt;
 import context.ClassData;
 import infrastructure.metrics.QualityMetrics;
 
+/**
+ * Computes the Cyclomatic Complexity (CC -> printed as WMC*) of a class.
+ * CC is computed as the average complexity of its methods, where each method's
+ * complexity is determined by counting the number of decision points (if statements,
+ * switch statements, and switch expressions) plus one.
+ */
 public class CyclomaticComplexityCalculator implements ClassMetricCalculator {
     @Override
     public void compute(ClassData classData, QualityMetrics metrics) {

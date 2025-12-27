@@ -5,6 +5,10 @@ import context.ClassData;
 import infrastructure.metrics.QualityMetrics;
 import repository.MetricsRepository;
 
+/**
+ * Computes the Number of Class Children (NOCC) for a given class.
+ * NOCC represents the number of direct subclasses that inherit from this class.
+ */
 public class NoccCalculator implements AggregateMetricCalculator {
 
     @Override

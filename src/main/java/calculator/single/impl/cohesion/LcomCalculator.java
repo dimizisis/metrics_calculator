@@ -6,6 +6,13 @@ import infrastructure.metrics.QualityMetrics;
 
 import java.util.TreeSet;
 
+/**
+ * Computes the LCOM (Lack of Cohesion of Methods) metric.
+ * LCOM is calculated based on the number of method pairs that do not share
+ * any instance variables minus the number of method pairs that do share
+ * instance variables. If the result is negative, LCOM is set to zero.
+ * If a class has no methods, LCOM is set to -1.
+ */
 public class LcomCalculator implements ClassMetricCalculator {
     @Override
     public void compute(ClassData classData, QualityMetrics metrics) {

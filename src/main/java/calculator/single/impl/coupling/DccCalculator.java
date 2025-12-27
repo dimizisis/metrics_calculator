@@ -5,7 +5,7 @@ import context.ClassData;
 import infrastructure.metrics.QualityMetrics;
 
 /** *
- * Calculator for the Direct Class Coupling (DCC) metric.
+ * Computes the Direct Class Coupling (DCC) metric.
  * DCC measures the number of other classes to which a class is directly coupled (same as CBO).
  */
 public class DccCalculator implements ClassMetricCalculator {
